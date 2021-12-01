@@ -25,7 +25,7 @@ env_module.Append(CPPPATH=["../../../../3rdparty/gmlib/include"])
 env_module.Append(CPPPATH=["../../../../physengine/include"])
 
 # Specify path to blaze -- on Vesleblaut's Vindauge
-#env_module.Append(CPPPATH=["E:/<path-to-system-include-folder (containing blaze folder)>"]) # eg. C:/vcpkg/installed/x64-windows/include
+env_module.Append(CPPPATH=["D:/UIT/ITP/vcpkg/installed/x64-windows/include"]) # eg. C:/vcpkg/installed/x64-windows/include
 
 # Add source-files for my module
 env_module.add_source_files(env_module.modules_sources, "*.cpp")
