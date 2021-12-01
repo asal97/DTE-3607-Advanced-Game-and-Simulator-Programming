@@ -10,6 +10,49 @@ namespace dte3607::physengine::fixtures
 {
 
 
+  struct FixtureLevel1 {
+
+    /*** API concept required types ***/
+
+    // Types
+    using ValueType   = types::Point3::ElementType;
+    using Point3      = types::Point3;
+    using Point3H     = types::Point3H;
+    using Vector3     = types::Vector3;
+    using Vector3H    = types::Vector3H;
+    using SpaceObject = types::ProjectiveSpaceObject;
+    using Timepoint   = types::HighResolutionTP;
+
+    // Fixture types
+    using Forces = types::Vector3;
+
+
+    /*** API concept required methods ***/
+
+    // Global properties
+    size_t noRigidBodies() const { return {}; }
+    void   setGravity([[maybe_unused]] Forces G) {}
+
+    // RB properties
+    types::Point3 globalFramePosition([[maybe_unused]] size_t rid) const
+    {
+      return {};
+    }
+
+    /*** Fixture unit-test setup API ***/
+    size_t createSphere([[maybe_unused]] ValueType radius      = 1.,
+                        [[maybe_unused]] Vector3   velocity    = {0, 0, 0},
+                        [[maybe_unused]] Vector3   translation = {0, 0, 0})
+    {
+      return {};
+    }
+
+    /*** END API requirements ***/
+
+
+  };
+
+
 
   struct FixtureLevel2 {
 
