@@ -200,10 +200,11 @@ namespace dte3607::physengine::types_ext
 
     /*** Members ***/
     RigidBodies m_rigid_bodies;
+    RigidBodies m_fixed_rigid_bodies;
+    RigidBodies m_non_fixed_rigid_bodies;
     RBShapes    m_rb_shapes;
 
     Forces m_forces;
-
 
     /*** Custom API methods ***/
 
@@ -240,7 +241,8 @@ namespace dte3607::physengine::types_ext
       return m_object;
     }
 
-    inline SpaceObjectBase::SpaceObject::ASFrameH SpaceObjectBase::pFrame() const
+    inline SpaceObjectBase::SpaceObject::ASFrameH
+    SpaceObjectBase::pFrame() const
     {
       return spaceObject().pSpaceFrameParent();
     }

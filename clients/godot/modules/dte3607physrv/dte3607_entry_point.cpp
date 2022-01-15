@@ -112,7 +112,7 @@ namespace detail
 
 
 /// [BEGIN] Keep this function here as this is highly modified
-//void PhysicsServerSW::step(real_t p_step)
+// void PhysicsServerSW::step(real_t p_step)
 //{
 //#ifndef _3D_DISABLED
 
@@ -138,7 +138,8 @@ namespace detail
 
 //#endif
 //}
-void PhysicsServerSW::step(real_t p_step) {
+void PhysicsServerSW::step(real_t p_step)
+{
 #ifndef _3D_DISABLED
 
   if (!active) {
@@ -147,7 +148,7 @@ void PhysicsServerSW::step(real_t p_step) {
 
   _update_shapes();
 
-  last_step = p_step;
+  last_step                                 = p_step;
   PhysicsDirectBodyStateSW::singleton->step = p_step;
 
   m_entry_point->step(p_step);
@@ -155,8 +156,8 @@ void PhysicsServerSW::step(real_t p_step) {
 //	island_count = 0;
 //	active_objects = 0;
 //	collision_pairs = 0;
-//	for (Set<const SpaceSW *>::Element *E = active_spaces.front(); E; E = E->next()) {
-//		stepper->step((SpaceSW *)E->get(), p_step, iterations);
+//	for (Set<const SpaceSW *>::Element *E = active_spaces.front(); E; E =
+// E->next()) { 		stepper->step((SpaceSW *)E->get(), p_step, iterations);
 //		island_count += E->get()->get_island_count();
 //		active_objects += E->get()->get_active_objects();
 //		collision_pairs += E->get()->get_collision_pairs();
@@ -217,6 +218,8 @@ void Dte3607EntryPoint::body_create(RID rid)
 
   // Set mode in backend
   detail::setMode(rb.get(), body);
+
+  m_fixture.updateComputationalWorld();
 }
 
 void Dte3607EntryPoint::body_set_mode(RID                     p_body,
@@ -232,6 +235,8 @@ void Dte3607EntryPoint::body_set_mode(RID                     p_body,
 
   // Set mode in backend
   detail::setMode(rb, body);
+
+  m_fixture.updateComputationalWorld();
 }
 
 
@@ -259,6 +264,8 @@ void Dte3607EntryPoint::body_add_shape(RID p_body, RID p_shape,
   rbp->m_shape = shape;
   detail::updateSofFromTransform(rbp->spaceObject(), p_transform);
   rbp->setFrictionCoef(1.0);
+
+  m_fixture.updateComputationalWorld();
 }
 
 void Dte3607EntryPoint::body_set_state(RID                      p_body,
@@ -273,6 +280,8 @@ void Dte3607EntryPoint::body_set_state(RID                      p_body,
   // Update Backend Sof
   if (p_state == PhysicsServer::BODY_STATE_TRANSFORM)
     detail::updateSofFromTransform(rb->spaceObject(), p_variant);
+
+  m_fixture.updateComputationalWorld();
 }
 
 void Dte3607EntryPoint::shape_create(RID p_shape)
@@ -297,6 +306,8 @@ void Dte3607EntryPoint::shape_create(RID p_shape)
     default:
       break;
   }
+
+  m_fixture.updateComputationalWorld();
 }
 
 void Dte3607EntryPoint::shape_set_data(RID p_shape, Variant const& p_data)
@@ -308,6 +319,7 @@ void Dte3607EntryPoint::shape_set_data(RID p_shape, Variant const& p_data)
   auto* shape = shape_opt.value();
 
   shape->setDataFromGodot(p_data);
+  m_fixture.updateComputationalWorld();
 }
 
 void BodySW::triggerSomethingWhichTriggersRedraw()

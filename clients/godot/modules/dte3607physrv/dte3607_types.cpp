@@ -1,5 +1,5 @@
 #include "dte3607_types.h"
-
+#include "fixtures.h"
 
 namespace frb
 {
@@ -130,15 +130,9 @@ namespace frb
 
   RigidBody::State& RigidBody::state() { return m_state; }
 
-  size_t Fixture::noRigidBodies() const
-  {
-    return m_rigid_bodies.size();
-  }
+  size_t Fixture::noRigidBodies() const { return m_rigid_bodies.size(); }
 
-  Fixture::Forces Fixture::externalForces() const
-  {
-    return m_forces;
-  }
+  Fixture::Forces Fixture::externalForces() const { return m_forces; }
 
   void Fixture::setGravity(Forces G) { m_forces = G; }
 

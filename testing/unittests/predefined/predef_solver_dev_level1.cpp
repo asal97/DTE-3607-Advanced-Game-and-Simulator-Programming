@@ -18,16 +18,6 @@ using namespace dte3607::physengine;
 using namespace std::chrono_literals;
 
 
-
-
-/////////////////
-/// \brief TEST
-///
-///
-
-
-
-
 struct SolverDevLevel0_Fixture001 : ::testing::Test {
 
   using TestFixture = types_ext::FixtureOOP;
@@ -109,6 +99,4 @@ TEST_F(SolverDevLevel1_Fixture001, Test001)
     EXPECT_NEAR(pos[0], 100, 1e-7);
   }
 }
-
-
 

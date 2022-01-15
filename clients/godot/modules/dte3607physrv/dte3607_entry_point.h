@@ -3,6 +3,7 @@
 
 #include "physics_server_sw.h"
 #include "dte3607_types.h"
+#include "fixtures.h"
 
 
 class Dte3607EntryPoint {

@@ -31,17 +31,15 @@ namespace dte3607::physengine::solver_dev::level0
   template <concepts::SolverFixtureLevel0 Fixture_T>
   void solve(Fixture_T& scenario, types::NanoSeconds timestep)
   {
-
     auto no_rbs = scenario.noRigidBodies();
-    for( auto rid = 0; rid < no_rbs; ++rid )
-    {
+    for (auto rid = 0; rid < no_rbs; ++rid) {
       auto constexpr NonFixed = Fixture_T::RBMode::NonFixed;
       if (scenario.mode(rid) not_eq NonFixed) continue;
 
       auto const [lin_traj, accel] = example_impl::computeLinearTrajectory(
         scenario.globalVelocity(rid), scenario.externalForces(), timestep);
 
-      scenario.translateParent(rid,lin_traj);
+      scenario.translateParent(rid, lin_traj);
       scenario.addAcceleration(rid, accel);
     }
   }
@@ -49,4 +47,4 @@ namespace dte3607::physengine::solver_dev::level0
 }   // namespace dte3607::physengine::solver_dev::level0
 
 
-#endif // DTE3607_PHYSENGINE_SOLVER_DEVELOPMENT_LEVEL0_H
+#endif   // DTE3607_PHYSENGINE_SOLVER_DEVELOPMENT_LEVEL0_H

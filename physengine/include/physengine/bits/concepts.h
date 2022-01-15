@@ -35,7 +35,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.noRigidBodies()
-        } -> std::convertible_to<size_t>;
+      }
+      ->std::convertible_to<size_t>;
     };
 
     // Query the global frame of rigid body with ID
@@ -45,7 +46,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.globalFramePosition(rid)
-        } -> std::convertible_to<types::Point3>;
+      }
+      ->std::convertible_to<types::Point3>;
     };
 
 
@@ -56,7 +58,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.setGravity(vector)
-        } -> std::same_as<void>;
+      }
+      ->std::same_as<void>;
     };
 
 
@@ -68,7 +71,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.externalForces()
-        } -> std::convertible_to<types::Vector3>;
+      }
+      ->std::convertible_to<types::Vector3>;
     };
 
     template <typename Fixture_T>
@@ -77,7 +81,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.nonFixedSphereRBs()
-        } -> std::same_as<std::vector<size_t>>;
+      }
+      ->std::same_as<std::vector<size_t>>;
     };
 
     template <typename Fixture_T>
@@ -86,7 +91,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.fixedInfPlaneRBs()
-        } -> std::same_as<std::vector<size_t>>;
+      }
+      ->std::same_as<std::vector<size_t>>;
     };
 
 
@@ -96,7 +102,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.rbSphereRadius(rid)
-        } -> std::convertible_to<types::ValueType>;
+      }
+      ->std::convertible_to<types::ValueType>;
     };
 
 
@@ -106,7 +113,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.rbPlaneNormal(rid)
-        } -> std::convertible_to<types::Vector3>;
+      }
+      ->std::convertible_to<types::Vector3>;
     };
 
     template <typename Fixture_T>
@@ -114,7 +122,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.rbMode(rid)
-        } -> std::convertible_to<types::RBMode>;
+      }
+      ->std::convertible_to<types::RBMode>;
     };
 
     template <typename Fixture_T>
@@ -122,7 +131,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.rbState(rid)
-        } -> std::convertible_to<types::RBState>;
+      }
+      ->std::convertible_to<types::RBState>;
     };
 
     template <typename Fixture_T>
@@ -131,7 +141,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.rbPlaneMaxFrictionCoef(rid)
-        } -> std::convertible_to<types::ValueType>;
+      }
+      ->std::convertible_to<types::ValueType>;
     };
 
 
@@ -141,7 +152,8 @@ namespace dte3607::physengine::concepts
     {
       {
         fixture.rbSphereMaxFrictionCoef(rid)
-        } -> std::convertible_to<types::ValueType>;
+      }
+      ->std::convertible_to<types::ValueType>;
     };
 
 
@@ -158,13 +170,13 @@ namespace dte3607::physengine::concepts
   template <typename Fixture_T>
   concept SolverFixtureLevel0 =
 
-    detail::BasicTypesDefined<Fixture_T> and
+    detail::BasicTypesDefined<Fixture_T>and
 
-    detail::NoRigidBodiesQueryable<Fixture_T> and
+      detail::NoRigidBodiesQueryable<Fixture_T>and
 
-    detail::GlobalFramePositionQueryable<Fixture_T> and
+        detail::GlobalFramePositionQueryable<Fixture_T>and
 
-    detail::GravitySettable<Fixture_T> and
+          detail::GravitySettable<Fixture_T>and
 
     // setters
     requires(Fixture_T fixture, types::ValueType value, types::Vector3 vector)
@@ -173,7 +185,8 @@ namespace dte3607::physengine::concepts
     // Create sphere (radius, velocity, initial translation)
     {
       fixture.createSphere(value, vector, vector)
-      } -> std::same_as<size_t>;
+    }
+    ->std::same_as<size_t>;
   };
 
 
@@ -189,21 +202,21 @@ namespace dte3607::physengine::concepts
   template <typename Fixture_T>
   concept SolverFixtureLevel2 =
 
-    detail::BasicTypesDefined<Fixture_T> and
+    detail::BasicTypesDefined<Fixture_T>and
 
-    detail::NoRigidBodiesQueryable<Fixture_T> and
+      detail::NoRigidBodiesQueryable<Fixture_T>and
 
-    detail::GlobalFramePositionQueryable<Fixture_T> and
+        detail::GlobalFramePositionQueryable<Fixture_T>and
 
-    detail::GravitySettable<Fixture_T> and
+          detail::GravitySettable<Fixture_T>and
 
-    detail::NonFixedSphereRBsQueryable<Fixture_T> and
+            detail::NonFixedSphereRBsQueryable<Fixture_T>and
 
-    detail::FixedInfPlaneRBsQueryable<Fixture_T> and
+              detail::FixedInfPlaneRBsQueryable<Fixture_T>and
 
-    detail::RadiusOfSphereRBQueryable<Fixture_T> and
+                detail::RadiusOfSphereRBQueryable<Fixture_T>and
 
-    detail::NormalOnInfPlaneRBQueryable<Fixture_T> and
+                  detail::NormalOnInfPlaneRBQueryable<Fixture_T>and
 
     // setters
     requires(Fixture_T fixture, types::ValueType value, types::Vector3 vector)
@@ -212,12 +225,14 @@ namespace dte3607::physengine::concepts
     // Create sphere (radius, velocity, initial translation)
     {
       fixture.createSphere(value, vector, vector)
-      } -> std::same_as<size_t>;
+    }
+    ->std::same_as<size_t>;
 
     // Create fixed infinite plane (normal, initial translation)
     {
       fixture.createFixedInfPlane(vector, vector)
-      } -> std::same_as<size_t>;
+    }
+    ->std::same_as<size_t>;
   }
 
   ;
@@ -226,9 +241,9 @@ namespace dte3607::physengine::concepts
   template <typename Fixture_T>
   concept SolverFixtureLevel3 =
 
-    detail::BasicTypesDefined<Fixture_T> and
+    detail::BasicTypesDefined<Fixture_T>and
 
-    detail::RBStateQueryable<Fixture_T> and
+      detail::RBStateQueryable<Fixture_T>and
 
 
     // setters
@@ -240,13 +255,15 @@ namespace dte3607::physengine::concepts
     // coefficient, mass)
     {
       fixture.createSphere(value, vector, vector, rb_state, value, value)
-      } -> std::same_as<size_t>;
+    }
+    ->std::same_as<size_t>;
 
     // Create fixed infinite plane (normal, initial translation, friction
     // coefficient)
     {
       fixture.createFixedInfPlane(vector, vector, value)
-      } -> std::same_as<size_t>;
+    }
+    ->std::same_as<size_t>;
   }
 
   ;

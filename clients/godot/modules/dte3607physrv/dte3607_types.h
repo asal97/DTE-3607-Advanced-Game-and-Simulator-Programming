@@ -16,6 +16,7 @@
 #include <vector>
 
 
+
 namespace frb
 {
 
@@ -191,78 +192,6 @@ namespace frb
 
 
 
-
-  struct Fixture {
-
-
-    /*** API concept required types ***/
-
-    // Types
-    using ValueType   = types::Point3::ElementType;
-    using Point3      = types::Point3;
-    using Point3H     = types::Point3H;
-    using Vector3     = types::Vector3;
-    using Vector3H    = types::Vector3H;
-    using SpaceObject = types::ProjectiveSpaceObject;
-    using Timepoint   = types::HighResolutionTP;
-
-    // Fixture types
-    using Forces = types::Vector3;
-
-
-    // RigidBody types
-    using RigidBodyPtr = std::unique_ptr<RigidBody>;
-    using RigidBodies  = std::vector<RigidBodyPtr>;
-
-    using RBShape    = rb_shapes::Shape;
-    using RBShapePtr = std::unique_ptr<RBShape>;
-    using RBShapes   = std::vector<RBShapePtr>;
-
-    using RBPart  = RigidBodyPart;
-    using RBMode  = RigidBody::Mode;
-    using RBState = RigidBody::State;
-
-
-
-    /*** API concept required methods ***/
-
-    // Global properties
-    size_t noRigidBodies() const;
-    Forces externalForces() const;
-
-    void setGravity(Forces);
-
-    // RB properties
-    types::Point3  globalFramePosition(size_t rid) const;
-    types::Vector3 globalVelocity(size_t rid) const;
-
-    // Modes and states
-    RigidBody::Mode mode(size_t rid) const;
-
-    // Transform
-    void translateParent(size_t rid, Vector3 lin_trajectory);
-    void setVelocity(size_t rid, Vector3 velocity);
-    void addAcceleration(size_t rid, Vector3 accel);
-
-    // Construction methods
-    size_t createSphere(ValueType radius = 1., Vector3 velocity = {0, 0, 0},
-                        Vector3   translation   = {0, 0, 0},
-                        ValueType friction_coef = 1.)
-    {
-      return {};
-    }
-
-    /*** END API requirements ***/
-
-
-
-    /*** Members ***/
-
-    RigidBodies m_rigid_bodies;
-    RBShapes    m_rb_shapes;
-
-    Forces m_forces;
-  };
 
 }   // namespace frb
 
