@@ -81,6 +81,7 @@ struct SolverDevLevel1_Fixture001 : ::testing::Test {
     m_scenario->createSphere(1.0, {100, 0, 0}, {0, 0, 0});
     m_scenario->createSphere(2.0, {100, 0, 0}, {0, 10, 0});
     m_scenario->createSphere(3.0, {100, 0, 0}, {0, 0, 10});
+
   }
   void TearDown() final { m_scenario.release(); }
 };

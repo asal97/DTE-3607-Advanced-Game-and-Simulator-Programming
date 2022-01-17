@@ -233,6 +233,8 @@ namespace dte3607::physengine::fixtures
       auto& rbp    = rb->m_parts.back();
       rbp->m_shape = sphere;
 
+      updateComputationalWorld();
+
       return rbi;
     }
 

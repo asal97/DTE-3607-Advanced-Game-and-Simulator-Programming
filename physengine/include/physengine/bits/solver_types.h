@@ -9,7 +9,7 @@ namespace dte3607::physengine::solver_types
 
   struct Params {
     Vector3 F;    // External forces(environment)
-    double  dt;   // Time step (system)
+    types::Duration  timestep;   // Time step (system)
   };
 
   struct CacheProcDataBlock {
