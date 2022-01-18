@@ -159,7 +159,11 @@ TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P500ms, dt1s)
     m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_fplane_q, m_fplane_n,
     m_external_forces, m_t_0, 1s);
 
-  EXPECT_FALSE(res_1s);
+  EXPECT_TRUE(res_1s);
+  if(res_1s) {
+    auto const res_1s_value = res_1s.value();
+    EXPECT_DOUBLE_EQ(res_1s_value, 0.9);
+  }
 }
 
 TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P500ms, dt2s)

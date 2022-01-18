@@ -25,7 +25,7 @@ namespace dte3607::physengine::solver_dev::level1
 
       // Move to different process
        out_ds = std::get<0>(outputs);
-              out_a = std::get<1>(outputs);
+       out_a = std::get<1>(outputs);
        pos += out_ds;
        vel += out_a;
     };

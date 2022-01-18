@@ -2,6 +2,8 @@
 #define DTE3607_PHYSENGINE_MECHANICS_SPHERE_VS_FIXED_PLANE_DETECTION_H
 
 #include "../bits/types.h"
+#include "../utils/type_conversion.h"
+#include "../mechanics/compute_trajectory.h"
 
 // stl
 #include <optional>
@@ -20,7 +22,30 @@ namespace dte3607::physengine::mechanics
     [[maybe_unused]] types::HighResolutionTP const& t_0,
     [[maybe_unused]] types::Duration                timestep)
   {
-    return {};
+    //auto ds = mechanics::computeLinearTrajectory(sphere_v,external_forces,timestep);
+auto const ds = mechanics::computeLinearTrajectory(sphere_v,external_forces,timestep).first;
+            //sphere_v * utils::toDt(timestep)* 0.5 * external_forces * std::pow(utils::toDt(timestep),2);
+    auto const d = (fplane_q + (sphere_r * fplane_n)) - sphere_p;
+    auto RWithoutN = blaze::inner(ds,fplane_n);
+    auto QWithoutN = blaze::inner(d,fplane_n);
+    auto const x = QWithoutN/RWithoutN;
+
+
+    if (blaze::inner(ds,fplane_n) == 0)
+        return std::nullopt;
+
+
+    if (x<=0 || x>1)
+        return std::nullopt;
+
+
+    auto const timeOfimpact = t_0 + (x * timestep);
+    if (timeOfimpact > t_0 && timeOfimpact > sphere_tc && timeOfimpact < t_0 + timestep)
+        return x;
+
+    else
+        return std::nullopt;
+
   }
 
 }   // namespace dte3607::physengine::mechanics

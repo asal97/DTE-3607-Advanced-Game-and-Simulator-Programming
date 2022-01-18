@@ -26,6 +26,29 @@ namespace dte3607::physengine::solver_types
 
     Vector3 out_p;   // New Position
   };
+
+  struct SphereGeomDataBlock{
+      Vector3 p;
+      double r;
+      Vector3 ds;
+  };
+
+  struct InfPlaneGeomDataBlock{
+      Vector3 p;
+      double n;
+  };
+
+  struct IntsecStatusDataBlock{
+      bool is_collision;
+      double col_tp;
+  };
+
+  struct IntersectDetProcDataBlock{
+      SphereGeomDataBlock sphere;
+      InfPlaneGeomDataBlock plane;
+      IntsecStatusDataBlock status;
+  };
+
 }   // namespace dte3607::physengine::solver_types
 
 
