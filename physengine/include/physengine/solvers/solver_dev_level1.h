@@ -20,8 +20,6 @@ namespace dte3607::physengine::solver_dev::level1
 
       std::tuple <types::Vector3, types::Vector3> outputs = std::tie(out_ds,out_a);
       outputs = mechanics::computeLinearTrajectory(vel,F,dt);
-//      out_a                           = F * dt;
-//      out_ds                          = vel * dt + 0.5 * F * std::pow(dt, 2.0);
 
       // Move to different process
        out_ds = std::get<0>(outputs);
@@ -38,9 +36,6 @@ namespace dte3607::physengine::solver_dev::level1
     solver_types::Params params;
     params.F = scenario.m_forces;
     params.timestep = timestep;
-//    std::tuple<typename Fixture_T::Vector3, types::ValueType> params;
-//    std::get<0>(params) = scenario.m_forces;
-//    std::get<1>(params) = utils::toDt(timestep);
     computeCache(scenario.m_backend->m_cache_data, params);
 
     for (auto const& id : scenario.m_backend->m_rb_cache) {

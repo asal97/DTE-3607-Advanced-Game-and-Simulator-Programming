@@ -166,9 +166,12 @@ namespace dte3607::physengine::fixtures
 
     // Fixture types
     using Forces         = types::Vector3;
+      ////
     using BackendFixture = backend::BackendFixture;
+      ///
 
     // RigidBody types
+      ////
     using RigidBody    = rb_oop::RigidBody;
     using RigidBodyPtr = std::unique_ptr<RigidBody>;
     using RigidBodies  = std::vector<RigidBodyPtr>;
@@ -180,10 +183,12 @@ namespace dte3607::physengine::fixtures
     using RBPart  = rb_oop::RigidBodyPart;
     using RBMode  = RigidBody::Mode;
     using RBState = RigidBody::State;
+      ////
 
     /*** API concept required methods ***/
 
     // Global properties
+      ///
     size_t noRigidBodies() const { return m_rigid_bodies.size(); }
     void   setGravity([[maybe_unused]] Forces G) { m_forces = G; }
     void   translateParent(size_t rid, Vector3 lin_trajectory)
@@ -196,7 +201,7 @@ namespace dte3607::physengine::fixtures
     }
 
 
-    // RB properties
+    // RB properties ///
     types::Point3 globalFramePosition([[maybe_unused]] size_t rid) const
     {
       return m_rigid_bodies[rid]->globalFramePosition();
@@ -209,7 +214,7 @@ namespace dte3607::physengine::fixtures
     {
       return m_rigid_bodies[rid]->mode();
     }
-
+///////
     /*** Fixture unit-test setup API ***/
     size_t createSphere([[maybe_unused]] ValueType radius,
                         [[maybe_unused]] Vector3   velocity,
@@ -237,7 +242,7 @@ namespace dte3607::physengine::fixtures
 
       return rbi;
     }
-
+//////
     /*** END API requirements ***/
 
     void updateComputationalWorld()
@@ -275,43 +280,133 @@ namespace dte3607::physengine::fixtures
     // Fixture types
     using Forces = types::Vector3;
 
+    using BackendFixture = backend::BackendFixture;
+
+      // RigidBody types
+    using RigidBody    = rb_oop::RigidBody;
+    using RigidBodyPtr = std::unique_ptr<RigidBody>;
+    using RigidBodies  = std::vector<RigidBodyPtr>;
+
+    using RBShape    = rb_oop::rb_shapes::Shape;
+    using RBShapePtr = std::unique_ptr<RBShape>;
+    using RBShapes   = std::vector<RBShapePtr>;
+
+    using RBPart  = rb_oop::RigidBodyPart;
+    using RBMode  = RigidBody::Mode;
+    using RBState = RigidBody::State;
+
 
     /*** API concept required methods ***/
 
     // Environment
-    void setGravity(Forces) {}
+    void setGravity(Forces G) { m_forces = G; }
+
 
     // RBs
-    size_t              noRigidBodies() const { return {}; }
+    size_t noRigidBodies() const { return m_rigid_bodies.size(); }
+
+    void   translateParent(size_t rid, Vector3 lin_trajectory)
+    {
+      m_rigid_bodies[rid]->m_object.translateParent(lin_trajectory);
+    }
+    void addAcceleration(size_t rid, Vector3 a)
+    {
+      m_rigid_bodies[rid]->addAcceleration(a);
+    }
+
+
+    //////////////// change
     std::vector<size_t> nonFixedSphereRBs() const { return {}; }
     std::vector<size_t> fixedInfPlaneRBs() const { return {}; }
-
     ValueType rbSphereRadius([[maybe_unused]] size_t s_rid) const { return {}; }
     Vector3   rbPlaneNormal([[maybe_unused]] size_t p_rid) const { return {}; }
+    /////////////////////////
 
     // RB properties
     types::Point3 globalFramePosition([[maybe_unused]] size_t rid) const
     {
-      return {};
+      return m_rigid_bodies[rid]->globalFramePosition();
     }
 
+    types::Vector3 globalVelocity(size_t rid) const;
+
+    // Modes and states
+    RigidBody::Mode mode(size_t rid) const
+    {
+      return m_rigid_bodies[rid]->mode();
+    }
 
     /*** Fixture unit-test setup API ***/
 
-    size_t createSphere([[maybe_unused]] ValueType radius      = 1.,
-                        [[maybe_unused]] Vector3   velocity    = {0, 0, 0},
-                        [[maybe_unused]] Vector3   translation = {0, 0, 0})
+    size_t createSphere([[maybe_unused]] ValueType radius,
+                        [[maybe_unused]] Vector3   velocity,
+                        [[maybe_unused]] Vector3   translation)
     {
-      return {};
+        m_rigid_bodies.emplace_back(std::make_unique<RigidBody>());
+        auto&      rb  = m_rigid_bodies.back();
+        auto const rbi = m_rigid_bodies.size() - 1;
+        rb->m_object.translateParent(translation);
+        rb->setMode(RigidBody::Mode::NonFixed);
+        rb->setVelocity(velocity);
+
+        m_rb_shapes.emplace_back(
+            std::make_unique<rb_oop::rb_shapes::Sphere>(radius));
+        auto* sphere = m_rb_shapes.back().get();
+
+          // Create RB body part and add sphere as shape to body part
+        rb->m_parts.emplace_back(std::make_unique<RBPart>());
+        auto& rbp    = rb->m_parts.back();
+        rbp->m_shape = sphere;
+
+        updateComputationalWorld();
+
+
+        return rbi;
     }
 
-    size_t createFixedInfPlane([[maybe_unused]] Vector3 normal      = {0, 1, 0},
-                               [[maybe_unused]] Vector3 translation = {0, 0, 0})
+    size_t createFixedInfPlane([[maybe_unused]] Vector3 normal ,
+                               [[maybe_unused]] Vector3 translation)
     {
-      return {};
+        m_rigid_bodies.emplace_back(std::make_unique<RigidBody>());
+        auto& rb = m_rigid_bodies.back();
+        auto const rbi = m_rigid_bodies.size() - 1;
+        rb->m_object.translateParent(translation);
+        rb->setMode(RigidBody::Mode::Fixed);
+
+        m_rb_shapes.emplace_back(
+        std::make_unique<rb_oop::rb_shapes::InfPlane>(normal));
+
+        auto* plane  = m_rb_shapes.back().get();
+
+        rb->m_parts.emplace_back(std::make_unique<RBPart>());
+        auto& rbp = rb->m_parts.back();
+        rbp->m_shape = plane;
+
+        updateComputationalWorld();
+
+
+      return rbi;
     }
 
     /*** END API requirements ***/
+
+
+    void updateComputationalWorld()
+      {
+        if (m_backend) m_backend.release();
+
+        m_backend = std::make_unique<BackendFixture>();
+        backend::initComputationalWorld(*this, *m_backend.get());
+      }
+
+      /*** persistent world ***/
+      RigidBodies m_rigid_bodies;
+      Forces      m_forces;
+      RBShapes    m_rb_shapes;
+
+      /*** computational world ***/
+      std::unique_ptr<BackendFixture> m_backend{nullptr};
+
   };
 
 

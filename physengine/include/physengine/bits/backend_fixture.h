@@ -14,13 +14,26 @@ namespace dte3607::physengine::backend
 
   // Solver types
   using CacheProcDataBlock = solver_types::CacheProcDataBlock;
+  using SphereGeomDataBlock = solver_types::SphereGeomDataBlock;
+  using InfPlaneGeomDataBlock = solver_types::InfPlaneGeomDataBlock;
   using CacheProcData      = std::vector<CacheProcDataBlock>;
   using Vector3            = types::Vector3;
 
+  using IntersectDetProcDataBlock = solver_types::IntersectDetProcDataBlock;
+  using IntersectDetProcData = std::vector<IntersectDetProcDataBlock>;
+
   struct BackendFixture {
     CacheProcData                      m_cache_data;
+    SphereGeomDataBlock                m_sphere_data;
+    InfPlaneGeomDataBlock              m_plane_data;
     std::unordered_map<size_t, size_t> m_rb_cache;
   };
+
+  template <typename Fixture_T>
+  void initSphere(Fixture_T const& f, BackendFixture& bf, size_t id){
+//   bf.m_sphere_data.emplace_back(rb->globalFramePosition(), rb->velocity(),
+//                                 Vector3{0, 0, 0}, Vector3{0, 0, 0})
+}
 
   template <typename Fixture_T>
   void initComputationalWorld(Fixture_T const& f, BackendFixture& bf)

@@ -79,7 +79,11 @@ namespace frb
       return {};
     }
 
-
+    size_t createFixedInfPlane([[maybe_unused]] Vector3 normal      = {0, 1, 0},
+                               [[maybe_unused]] Vector3 translation = {0, 0, 0})
+    {
+        return {};
+    }
     /*** END API requirements ***/
 
     void updateComputationalWorld()

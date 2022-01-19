@@ -35,7 +35,7 @@ namespace dte3607::physengine::solver_types
 
   struct InfPlaneGeomDataBlock{
       Vector3 p;
-      double n;
+      Vector3 n;
   };
 
   struct IntsecStatusDataBlock{
