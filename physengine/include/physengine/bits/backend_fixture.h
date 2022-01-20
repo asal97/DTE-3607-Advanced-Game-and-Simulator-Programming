@@ -32,9 +32,8 @@ namespace dte3607::physengine::backend
   template <typename Fixture_T>
   void initSphere(Fixture_T const& f, BackendFixture& bf, size_t id){
 //   bf.m_sphere_data.emplace_back(rb->globalFramePosition(), rb->velocity(),
-//                                 Vector3{0, 0, 0}, Vector3{0, 0, 0})
+//                                 Vector3{0, 0, 0}, Vector3{0, 0, 0});
 }
-
   template <typename Fixture_T>
   void initComputationalWorld(Fixture_T const& f, BackendFixture& bf)
   {

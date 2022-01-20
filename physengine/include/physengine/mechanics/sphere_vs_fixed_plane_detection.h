@@ -24,7 +24,7 @@ namespace dte3607::physengine::mechanics
   {
     //auto ds = mechanics::computeLinearTrajectory(sphere_v,external_forces,timestep);
 auto const ds = mechanics::computeLinearTrajectory(sphere_v,external_forces,timestep).first;
-            //sphere_v * utils::toDt(timestep)* 0.5 * external_forces * std::pow(utils::toDt(timestep),2);
+
     auto const d = (fplane_q + (sphere_r * fplane_n)) - sphere_p;
     auto RWithoutN = blaze::inner(ds,fplane_n);
     auto QWithoutN = blaze::inner(d,fplane_n);
