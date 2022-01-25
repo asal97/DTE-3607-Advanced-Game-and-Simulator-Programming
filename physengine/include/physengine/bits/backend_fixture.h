@@ -17,6 +17,8 @@ namespace dte3607::physengine::backend
   using SphereGeomDataBlock = solver_types::SphereGeomDataBlock;
   using InfPlaneGeomDataBlock = solver_types::InfPlaneGeomDataBlock;
   using CacheProcData      = std::vector<CacheProcDataBlock>;
+  using SphereGeomData = std::vector<SphereGeomDataBlock>;
+  using InfPlaneGeomData = std::vector<InfPlaneGeomDataBlock>;
   using Vector3            = types::Vector3;
 
   using IntersectDetProcDataBlock = solver_types::IntersectDetProcDataBlock;
@@ -24,34 +26,32 @@ namespace dte3607::physengine::backend
 
   struct BackendFixture {
     CacheProcData                      m_cache_data;
-    SphereGeomDataBlock                m_sphere_data;
-    InfPlaneGeomDataBlock              m_plane_data;
+    SphereGeomData                m_sphere_data;
+    InfPlaneGeomData             m_plane_data;
     std::unordered_map<size_t, size_t> m_rb_cache;
+    std::unordered_map<size_t, size_t> m_rb_plane;
+    std::unordered_map<size_t, size_t> m_rb_sphere;
   };
 
-  template <typename Fixture_T>
-  void initSphere(Fixture_T const& f, BackendFixture& bf, size_t id){
-//   bf.m_sphere_data.emplace_back(rb->globalFramePosition(), rb->velocity(),
-//                                 Vector3{0, 0, 0}, Vector3{0, 0, 0});
-}
-  template <typename Fixture_T>
-  void initComputationalWorld(Fixture_T const& f, BackendFixture& bf)
+
+  void initSphere( BackendFixture& bf,Vector3 position,double radius,Vector3 velocity,size_t rbi)
   {
-    size_t id = 0ul;
+      bf.m_cache_data.emplace_back(position,velocity,Vector3{0,0,0},Vector3{0,0,0});
+      bf.m_rb_cache.emplace(rbi,bf.m_cache_data.size() - 1);
 
-    for (auto const& rb : f.m_rigid_bodies) {
-      auto current_id         = id++;
-      auto constexpr NonFixed = Fixture_T::RBMode::NonFixed;
-      if (rb->mode() not_eq NonFixed) continue;
+      bf.m_sphere_data.emplace_back(position,radius,Vector3{0,0,0});
+      bf.m_rb_sphere.emplace(rbi,bf.m_sphere_data.size() - 1);
 
-      bf.m_cache_data.emplace_back(rb->globalFramePosition(), rb->velocity(),
-                                   Vector3{0, 0, 0}, Vector3{0, 0, 0});
-
-      // [cd1, cd2, cd3]
-      // [plane, sphere, sphere, shpere]
-      bf.m_rb_cache.emplace(bf.m_cache_data.size() - 1, current_id);
-    }
   }
+
+
+  void initPlane( BackendFixture& bf,Vector3 position,Vector3 normal,size_t rbi)
+  {
+      bf.m_plane_data.emplace_back(position,normal);
+      bf.m_rb_plane.emplace(rbi,bf.m_plane_data.size() - 1);
+  }
+
+
 }   // namespace dte3607::physengine::backend
 
 #endif   // DTE3607_PHYSENGINE_BACKEND_FIXTURES_H

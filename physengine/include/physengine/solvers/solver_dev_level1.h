@@ -14,8 +14,8 @@ namespace dte3607::physengine::solver_dev::level1
   void computeCache(Data_T& data, Params_T const& params)
   {
     auto const proc_kernel = [&params](auto& data) {
-      auto const& [F, dt]             = params;
-      auto& [pos, vel, out_a, out_ds] = data;
+      auto const& [F, dt,t_0]             = params;
+      auto& [pos, vel, out_a, out_ds,t_c] = data;
 
 
       std::tuple <types::Vector3, types::Vector3> outputs = std::tie(out_ds,out_a);
@@ -36,13 +36,13 @@ namespace dte3607::physengine::solver_dev::level1
     solver_types::Params params;
     params.F = scenario.m_forces;
     params.timestep = timestep;
-    computeCache(scenario.m_backend->m_cache_data, params);
+    computeCache(scenario.m_backend.m_cache_data, params);
 
-    for (auto const& id : scenario.m_backend->m_rb_cache) {
+    for (auto const& id : scenario.m_backend.m_rb_cache) {
       scenario.translateParent(
-        id.second, scenario.m_backend->m_cache_data[id.first].out_ds);
+        id.second, scenario.m_backend.m_cache_data[id.first].out_ds);
       scenario.addAcceleration(
-        id.second, scenario.m_backend->m_cache_data[id.first].out_a);
+        id.second, scenario.m_backend.m_cache_data[id.first].out_a);
     }
   }
 

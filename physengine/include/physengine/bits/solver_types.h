@@ -10,6 +10,8 @@ namespace dte3607::physengine::solver_types
   struct Params {
     Vector3 F;    // External forces(environment)
     types::Duration  timestep;   // Time step (system)
+
+    types::HighResolutionTP t_0;
   };
 
   struct CacheProcDataBlock {
@@ -18,6 +20,8 @@ namespace dte3607::physengine::solver_types
 
     Vector3 out_a;    // Acceleration
     Vector3 out_ds;   // Trajectory
+
+    types::HighResolutionTP t_c;
   };
 
   struct SimProcDataBlock {

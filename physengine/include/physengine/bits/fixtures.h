@@ -238,20 +238,21 @@ namespace dte3607::physengine::fixtures
       auto& rbp    = rb->m_parts.back();
       rbp->m_shape = sphere;
 
-      updateComputationalWorld();
+//      updateComputationalWorld();
+       backend::initSphere(m_backend,rb->globalFramePosition(),radius,velocity,rbi);
 
       return rbi;
     }
 //////
     /*** END API requirements ***/
 
-    void updateComputationalWorld()
-    {
-      if (m_backend) m_backend.release();
+//    void updateComputationalWorld()
+//    {
+//      if (m_backend) m_backend.release();
 
-      m_backend = std::make_unique<BackendFixture>();
-      backend::initComputationalWorld(*this, *m_backend.get());
-    }
+//      m_backend = std::make_unique<BackendFixture>();
+//      backend::initComputationalWorld(*this, *m_backend.get());
+//    }
 
     /*** persistent world ***/
     RigidBodies m_rigid_bodies;
@@ -259,9 +260,8 @@ namespace dte3607::physengine::fixtures
     RBShapes    m_rb_shapes;
 
     /*** computational world ***/
-    std::unique_ptr<BackendFixture> m_backend{nullptr};
+    BackendFixture m_backend;
   };
-
 
 
   struct FixtureLevel2 {
@@ -316,11 +316,35 @@ namespace dte3607::physengine::fixtures
 
 
     //////////////// change
-    std::vector<size_t> nonFixedSphereRBs() const { return {}; }
-    std::vector<size_t> fixedInfPlaneRBs() const { return {}; }
-    ValueType rbSphereRadius([[maybe_unused]] size_t s_rid) const { return {}; }
-    Vector3   rbPlaneNormal([[maybe_unused]] size_t p_rid) const { return {}; }
-    /////////////////////////
+    std::vector<size_t> nonFixedSphereRBs() const {
+        std::vector<size_t> m_spheres;
+        for(auto i=0;i<m_rigid_bodies.size();i++)
+        {
+            if(m_rigid_bodies.at(i)->mode() == types::RBMode::NonFixed )
+                m_spheres.emplace_back(i);
+        }
+
+        return m_spheres;
+    }
+    std::vector<size_t> fixedInfPlaneRBs() const {
+        std::vector<size_t> m_plane;
+        for(auto i=0;i<m_rigid_bodies.size();i++)
+        {
+            if(m_rigid_bodies.at(i)->mode() == types::RBMode::Fixed )
+                m_plane.emplace_back(i);
+        }
+
+        return m_plane;
+    }
+    ValueType rbSphereRadius([[maybe_unused]] size_t s_rid) const {
+
+        return{m_backend.m_sphere_data[m_backend.m_rb_sphere.at(s_rid)].r};
+
+    }
+    Vector3   rbPlaneNormal([[maybe_unused]] size_t p_rid) const {
+        return{m_backend.m_plane_data[m_backend.m_rb_plane.at(p_rid)].n};
+    }
+
 
     // RB properties
     types::Point3 globalFramePosition([[maybe_unused]] size_t rid) const
@@ -349,6 +373,7 @@ namespace dte3607::physengine::fixtures
         rb->setMode(RigidBody::Mode::NonFixed);
         rb->setVelocity(velocity);
 
+
         m_rb_shapes.emplace_back(
             std::make_unique<rb_oop::rb_shapes::Sphere>(radius));
         auto* sphere = m_rb_shapes.back().get();
@@ -358,7 +383,9 @@ namespace dte3607::physengine::fixtures
         auto& rbp    = rb->m_parts.back();
         rbp->m_shape = sphere;
 
-        updateComputationalWorld();
+
+        backend::initSphere(m_backend,rb->globalFramePosition(),radius,velocity,rbi);
+
 
 
         return rbi;
@@ -382,7 +409,9 @@ namespace dte3607::physengine::fixtures
         auto& rbp = rb->m_parts.back();
         rbp->m_shape = plane;
 
-        updateComputationalWorld();
+
+
+        backend::initPlane(m_backend,rb->globalFramePosition(),normal,rbi);
 
 
       return rbi;
@@ -391,13 +420,13 @@ namespace dte3607::physengine::fixtures
     /*** END API requirements ***/
 
 
-    void updateComputationalWorld()
-      {
-        if (m_backend) m_backend.release();
+//    void updateComputationalWorld()
+//      {
+//        if (m_backend) m_backend.release();
 
-        m_backend = std::make_unique<BackendFixture>();
-        backend::initComputationalWorld(*this, *m_backend.get());
-      }
+//        m_backend = std::make_unique<BackendFixture>();
+//        backend::initComputationalWorld( *m_backend.get());
+//      }
 
       /*** persistent world ***/
       RigidBodies m_rigid_bodies;
@@ -405,7 +434,8 @@ namespace dte3607::physengine::fixtures
       RBShapes    m_rb_shapes;
 
       /*** computational world ***/
-      std::unique_ptr<BackendFixture> m_backend{nullptr};
+      //change
+      BackendFixture m_backend;
 
   };
 
