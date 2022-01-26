@@ -17,50 +17,24 @@ void computeCache(Data_T& data,/*Plane_T const& plane,*/ /*Sphere_T& sphere,*/ P
         auto& [pos, vel, out_a, out_ds,t_c] = data;
         };
         std::ranges::for_each(plane, proc_kernel);
-        std::tuple <types::Vector3, types::Vector3> outputs = std::tie(out_ds,out_a);
-        outputs = mechanics::computeLinearTrajectory(vel,F,dt);
+//        std::tuple <types::Vector3, types::Vector3> outputs = std::tie(out_ds,out_a);
+//        outputs = mechanics::computeLinearTrajectory(vel,F,dt);
 
         // Move to different process
-        out_ds = std::get<0>(outputs);
-        out_a = std::get<1>(outputs);
-        t_c = defineTime(params);
+//        out_ds = std::get<0>(outputs);
+//        out_a = std::get<1>(outputs);
+//        t_c = defineTime(params);
     }
 template <typename Intersect_T,typename Plane_T , typename Sphere_T>
 void detectingCollision(Intersect_T const& data,types::Duration timestep)
     {
-            auto const proc_kernel = [&intersection](auto& data){
-
-                auto const& [planePos, n] = plane;
-                auto& [spherePos,vel, r, ds] = sphere;
-                auto& [is_collision,col_tp] = status;
-
-            };
-                   std::ranges::for_each(plane, proc_kernel);
-            foreach (sphere spheres) {
-            foreach (plane, planes) {
-                if(mechanics::detectCollisionSphereFixedPlane(t_c,spherePos,r,vel,planePos,n,a,t_0,timestep))
-                {
-                    solver_types::IntersectDetProcDataBlock intersect;
-                    intersect.plane = plane;
-                    intersect.sphere = sphere;
-                    intersect.status.is_collision = true;
-                    intersect.status.col_tp = mechanics::detectCollisionSphereFixedPlane(t_c,spherePos,r,vel,planePos,n,a,t_0,timestep);
 
 
-                }
-            }
 
         }
 
-            }
-template<typename Param_T,>
-void defineTime(Param_T params)
-    {
-        auto now = types::HighResolutionClock.now();
-        foreach (sphere, params) {
-            sphere.t_c = now;
-        }
-    }
+
+
 
   template <concepts::SolverFixtureLevel2 Fixture_T>
   void solve([[maybe_unused]] Fixture_T&         scenario,
@@ -69,6 +43,19 @@ void defineTime(Param_T params)
       solver_types::Params params;
       params.F = scenario.m_forces;
       params.timestep = utils::toDuration(timestep);
+
+      auto now = types::HighResolutionClock.now();
+      params.t_0 = now;
+
+      auto& m_sphere_data = scenario.m_backend.m_sphere_data;
+      auto& m_plane_data = scenario.m_backend.m_plane_data;
+      auto& m_intersect_data = scenario.m_backend.m_intersect_data;
+
+      foreach (sphere, m_sphere_data) {
+          foreach (plane, m_plane_data) {
+              m_intersect_data.emplace_back(sphere,plane,(false,0.0));
+          }
+      }
 
       computeCache(scenario.m_backend.m_cache_data, params,scenario.m_backend.m_sphere_data);
       detectingCollision(scenario.m_backend.IntersectDetProcData,timestep);

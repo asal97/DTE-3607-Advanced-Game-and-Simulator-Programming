@@ -28,6 +28,7 @@ namespace dte3607::physengine::backend
     CacheProcData                      m_cache_data;
     SphereGeomData                m_sphere_data;
     InfPlaneGeomData             m_plane_data;
+    IntersectDetProcData         m_intersect_data;
     std::unordered_map<size_t, size_t> m_rb_cache;
     std::unordered_map<size_t, size_t> m_rb_plane;
     std::unordered_map<size_t, size_t> m_rb_sphere;
@@ -36,7 +37,7 @@ namespace dte3607::physengine::backend
 
   void initSphere( BackendFixture& bf,Vector3 position,double radius,Vector3 velocity,size_t rbi)
   {
-      bf.m_cache_data.emplace_back(position,velocity,Vector3{0,0,0},Vector3{0,0,0});
+      bf.m_cache_data.emplace_back(position,velocity,Vector3{0,0,0},Vector3{0,0,0},types::HighResolutionClock::now());
       bf.m_rb_cache.emplace(rbi,bf.m_cache_data.size() - 1);
 
       bf.m_sphere_data.emplace_back(position,radius,Vector3{0,0,0});
