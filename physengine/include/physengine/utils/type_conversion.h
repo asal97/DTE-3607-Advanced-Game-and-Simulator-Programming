@@ -12,8 +12,8 @@ namespace dte3607::physengine::utils
     return std::chrono::duration_cast<types::Dt>(timestep).count();
   }
 
-  types::Duration        toDuration(types::DtRep const& dt_rep);
-  inline types::Duration toDuration(types::DtRep const& dt_rep)
+  types::Duration        toDuration(types::Dt const& dt_rep);
+  inline types::Duration toDuration(types::Dt const& dt_rep)
   {
     return std::chrono::duration_cast<types::Duration>(
       types::MicroSecondsD(dt_rep));

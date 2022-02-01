@@ -37,7 +37,7 @@ SET(GCC_COMPILE_OPTIONS
 
 SET(MSVC_COMPILE_OPTIONS
     # REQUIRED ON
-    /WX /W4 /permissive-
+   /W4 /permissive-
     # REQUIRED ON
   )
 
