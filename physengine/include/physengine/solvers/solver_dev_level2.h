@@ -39,6 +39,7 @@ namespace dte3607::physengine::solver_dev::level2
           intersection.plane               = plane;
           intersection.status.is_collision = true;
           intersection.status.col_tp       = *detection;
+          cache[i].t_c                     = *detection;
           data.emplace_back(intersection);
         }
       }
@@ -73,9 +74,10 @@ namespace dte3607::physengine::solver_dev::level2
     sphere.p = p + ds;
   }
 
-  template <typename Intersect_T, typename Cache_T, typename Sphere_T>
+  template <typename Intersect_T, typename Cache_T, typename Sphere_T,
+            typename Param_T>
   void HandleFirstCollision(Intersect_T& sorted, Cache_T& cache,
-                            Sphere_T& spheres)
+                            Sphere_T& spheres, Param_T& params)
   {
     int index = 0;
     for (auto iter_sort : sorted) {
@@ -83,10 +85,36 @@ namespace dte3607::physengine::solver_dev::level2
       simulateObjects(iter_sort.sphere);
       //      std::vector<int>::iterator itr = std::find(v.begin(), v.end(),
       //      key);
-      auto itr = std::find(spheres.begin(), spheres.end(), iter_sort.sphere);
-      if (itr != spheres.cend()) index = std::distance(spheres.begin(), itr);
+
+      for (int i = 0; i < spheres.size(); i++) {
+        if (iter_sort.sphere.p == spheres[i].p
+            && iter_sort.sphere.r == spheres[i].r
+            && iter_sort.sphere.ds == spheres[i].ds) {
+          index = i;
+          break;
+        }
+      }
+      //      std::vector<solver_types::SphereGeomDataBlock>::iterator itr
+      //        = std::find(spheres.begin(), spheres.end(), iter_sort.sphere);
+      //      if (itr != spheres.end()) {
+      //      auto index        = std::distance(spheres.begin(), itr);
       cache[index].in_v = mechanics::computeImpactResponseSphereFixedPlane(
         cache[index].in_v, iter_sort.plane.n);
+      //////////////////
+      auto detection = mechanics::detectCollisionSphereFixedPlane(
+        cache[index].t_c, spheres[index].p, spheres[index].r, cache[index].in_v,
+        iter_sort.plane.p, iter_sort.plane.n, params.F, params.t_0,
+        params.timestep - (iter_sort.status.col_tp - params.t_0));
+
+      if (detection.has_value()) {
+        solver_types::IntersectDetProcDataBlock intersection;
+        intersection.sphere              = spheres[index];
+        intersection.plane               = iter_sort.plane;
+        intersection.status.is_collision = true;
+        intersection.status.col_tp       = *detection;
+        cache[index].t_c                 = *detection;
+        sorted.insert(intersection);
+      }
     }
   }
 
@@ -108,7 +136,7 @@ namespace dte3607::physengine::solver_dev::level2
 
     auto sorted = sortAndReduce(scenario.m_backend.m_intersect_data);
     HandleFirstCollision(sorted, scenario.m_backend.m_cache_data,
-                         scenario.m_backend.m_sphere_data);
+                         scenario.m_backend.m_sphere_data, params);
     simulateAll(scenario.m_backend.m_sphere_data, params);
   }
 }   // namespace dte3607::physengine::solver_dev::level2
