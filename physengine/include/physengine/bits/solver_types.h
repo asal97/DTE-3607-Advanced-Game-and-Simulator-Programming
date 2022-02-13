@@ -20,8 +20,6 @@ namespace dte3607::physengine::solver_types
 
     Vector3 out_a;    // Acceleration
     Vector3 out_ds;   // Trajectory
-
-    types::HighResolutionTP t_c;
   };
 
   struct SimProcDataBlock {
@@ -32,9 +30,12 @@ namespace dte3607::physengine::solver_types
   };
 
   struct SphereGeomDataBlock {
-    Vector3 p;
-    double  r;
-    Vector3 ds;
+    Vector3                 p;
+    double                  r;
+    Vector3                 ds;
+    Vector3                 v;
+    Vector3                 a;
+    types::HighResolutionTP t_c;
   };
 
   struct InfPlaneGeomDataBlock {
@@ -50,7 +51,8 @@ namespace dte3607::physengine::solver_types
   struct IntersectDetProcDataBlock {
     SphereGeomDataBlock   sphere;
     InfPlaneGeomDataBlock plane;
-    IntsecStatusDataBlock status;
+    //    IntsecStatusDataBlock status;
+    types::HighResolutionTP col_tp;
   };
 
 }   // namespace dte3607::physengine::solver_types

@@ -14,18 +14,19 @@ namespace dte3607::physengine::solver_dev::level1
   void computeCache(Data_T& data, Params_T const& params)
   {
     auto const proc_kernel = [&params](auto& data) {
-      auto const& [F, dt,t_0]             = params;
-      auto& [pos, vel, out_a, out_ds,t_c] = data;
+      auto const& [F, dt, t_0]        = params;
+      auto& [pos, vel, out_a, out_ds] = data;
 
 
-      std::tuple <types::Vector3, types::Vector3> outputs = std::tie(out_ds,out_a);
-      outputs = mechanics::computeLinearTrajectory(vel,F,dt);
+      std::tuple<types::Vector3, types::Vector3> outputs
+        = std::tie(out_ds, out_a);
+      outputs = mechanics::computeLinearTrajectory(vel, F, dt);
 
       // Move to different process
-       out_ds = std::get<0>(outputs);
-       out_a = std::get<1>(outputs);
-       pos += out_ds;
-       vel += out_a;
+      out_ds = std::get<0>(outputs);
+      out_a  = std::get<1>(outputs);
+      pos += out_ds;
+      vel += out_a;
     };
     std::ranges::for_each(data, proc_kernel);
   }
@@ -34,15 +35,15 @@ namespace dte3607::physengine::solver_dev::level1
   void solve(Fixture_T& scenario, types::Duration timestep)
   {
     solver_types::Params params;
-    params.F = scenario.m_forces;
+    params.F        = scenario.m_forces;
     params.timestep = timestep;
     computeCache(scenario.m_backend.m_cache_data, params);
 
     for (auto const& id : scenario.m_backend.m_rb_cache) {
       scenario.translateParent(
         id.second, scenario.m_backend.m_cache_data[id.first].out_ds);
-      scenario.addAcceleration(
-        id.second, scenario.m_backend.m_cache_data[id.first].out_a);
+      scenario.addAcceleration(id.second,
+                               scenario.m_backend.m_cache_data[id.first].out_a);
     }
   }
 
