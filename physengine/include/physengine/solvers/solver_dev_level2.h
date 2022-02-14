@@ -67,7 +67,7 @@ namespace dte3607::physengine::solver_dev::level2
   {
     std::multiset<solver_types::IntersectDetProcDataBlock, compare> sorted;
 
-    for (auto& intersect : intersection) {
+    for (auto intersect : intersection) {
       sorted.insert(intersect);
     }
 
@@ -81,31 +81,36 @@ namespace dte3607::physengine::solver_dev::level2
       intersection.sphere.v, params.F,
       intersection.col_tp - intersection.sphere.t_c);
 
-    auto& [p, r, s_ds, v, s_a, t_c] = intersection.sphere;
+    auto& sphere = intersection.sphere;
+    //    auto& [p, r, s_ds, v, s_a, t_c] = sphere;
 
-    p += ds;
-    v += a;
+    types::Vector3 temp   = sphere.p + ds;
+    intersection.sphere.p = temp;
+    sphere.v += a;
 
-    s_ds += ds;
-    s_a += a;
+    sphere.ds += ds;
+    sphere.a += a;
   }
 
-  template <typename Intersect_T, typename Param_T>
-  void HandleFirstCollision(Intersect_T& sorted, Param_T const& params)
+  template <typename SortIntersect_T, typename Param_T>
+  void HandleFirstCollision(SortIntersect_T& sorted, Param_T const& params)
   {
 
-    for (auto& collision : sorted) {
-      simulateObject(collision, params);
-      break;
-    }
-    //    simulateObject(*sorted.begin(), params);
+    //    for (auto& intersection : sorted) {
+    auto& intersection = *(sorted.begin());
+    auto [ds, a]       = mechanics::computeLinearTrajectory(
+      intersection.sphere.v, params.F,
+      intersection.col_tp - intersection.sphere.t_c);
+
+
+    simulateObject(intersection, params);
 
     auto VPrime = mechanics::computeImpactResponseSphereFixedPlane(
       (*sorted.begin()).sphere.v, (*sorted.begin()).plane.n);
 
-    auto col       = (*sorted.begin());
-    col.sphere.v   = VPrime;
-    col.sphere.t_c = (*sorted.begin()).col_tp;
+
+    intersection.sphere.v   = VPrime;
+    intersection.sphere.t_c = (*sorted.begin()).col_tp;
   }
 
   template <concepts::SolverFixtureLevel2 Fixture_T>
@@ -115,7 +120,11 @@ namespace dte3607::physengine::solver_dev::level2
     solver_types::Params params;
     params.F        = scenario.m_forces;
     params.timestep = timestep;
-    params.t_0      = types::HighResolutionClock::now();
+    auto now        = types::HighResolutionClock::now();
+    params.t_0      = now;
+    for (auto& spheres : scenario.m_backend.m_sphere_data) {
+      spheres.t_c = now;
+    }
 
 
     detectingCollision(scenario.m_backend.m_intersect_data,
