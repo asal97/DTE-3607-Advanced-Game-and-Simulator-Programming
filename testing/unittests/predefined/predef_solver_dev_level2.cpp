@@ -56,11 +56,10 @@ TEST_F(SolverDevLevel2Step1_Fixture001, Test001)
   solver_dev::level2::solve(*m_scenario, 1s);
 
   auto no_rbs = m_scenario->noRigidBodies();
-  for( auto rid = 0; rid < no_rbs; ++rid )
-  {
+  for (auto rid = 0; rid < no_rbs; ++rid) {
     // Ask for global frame position of object nr. i
     auto const pos = m_scenario->globalFramePosition(rid);
-    EXPECT_LT(pos[0], 10);
+    EXPECT_LT(pos[0], 10.1);
   }
 }
 
@@ -109,8 +108,8 @@ TEST_F(SolverDevLevel2Step1_Fixture002, Test001)
       auto const pp = m_scenario->globalFramePosition(p_rid);
       auto const sp = m_scenario->globalFramePosition(s_rid);
       auto const sr = m_scenario->rbSphereRadius(s_rid);
-      auto const d  = blaze::evaluate(sp - (pp + blaze::normalize(pn)*sr));
-      EXPECT_GE(blaze::inner(pn,d),0);
+      auto const d  = blaze::evaluate(sp - (pp + blaze::normalize(pn) * sr));
+      EXPECT_GE(blaze::inner(pn, d), 0);
     }
   }
 }
@@ -170,7 +169,7 @@ struct SolverDevLevel2Step2_Fixture002 : ::testing::Test {
 
 
     // Set external forces
-    m_scenario->setGravity({0,0,0});
+    m_scenario->setGravity({0, 0, 0});
 
 
     // make plane
@@ -198,12 +197,12 @@ TEST_F(SolverDevLevel2Step2_Fixture002, Test001)
   for (auto const& s_rid : m_scenario->nonFixedSphereRBs()) {
     for (auto const& p_rid : m_scenario->fixedInfPlaneRBs()) {
 
-      auto const pn = m_scenario->rbPlaneNormal(p_rid);
-      auto const pp = m_scenario->globalFramePosition(p_rid);
-      auto const sp = m_scenario->globalFramePosition(s_rid);
-      auto const sr = m_scenario->rbSphereRadius(s_rid);
-      auto const& d = sp - pp;
-      auto const pnd = blaze::inner(pn,d) - sr;
+      auto const  pn  = m_scenario->rbPlaneNormal(p_rid);
+      auto const  pp  = m_scenario->globalFramePosition(p_rid);
+      auto const  sp  = m_scenario->globalFramePosition(s_rid);
+      auto const  sr  = m_scenario->rbSphereRadius(s_rid);
+      auto const& d   = sp - pp;
+      auto const  pnd = blaze::inner(pn, d) - sr;
       EXPECT_TRUE(pnd > 0);
     }
   }
@@ -242,10 +241,10 @@ struct SolverDevLevel2Step2_Fixture003 : ::testing::Test {
 
     // Randomize zelection of normal
     auto const v_min = types::Vector3{-10, 5, -20};
-    auto const v_max = types::Vector3{ 20, 10, 10};
+    auto const v_max = types::Vector3{20, 10, 10};
 
-    std::random_device                     r;
-    std::default_random_engine             g(r());
+    std::random_device                               r;
+    std::default_random_engine                       g(r());
     std::uniform_real_distribution<types::ValueType> x_dist(v_min[0], v_max[0]);
     std::uniform_real_distribution<types::ValueType> y_dist(v_min[1], v_max[1]);
     std::uniform_real_distribution<types::ValueType> z_dist(v_min[2], v_max[2]);
@@ -257,8 +256,8 @@ struct SolverDevLevel2Step2_Fixture003 : ::testing::Test {
         for (auto z = 0; z < 3; ++z) {
 
           auto const v = types::Vector3{x_dist(g), y_dist(g), z_dist(g)};
-          sphere_data.emplace_back(
-            v, p + types::Vector3{2. * x, 2. * y, 2. * z});
+          sphere_data.emplace_back(v,
+                                   p + types::Vector3{2. * x, 2. * y, 2. * z});
         }
       }
     }
@@ -278,12 +277,12 @@ TEST_F(SolverDevLevel2Step2_Fixture003, Test001)
   for (auto const& s_rid : m_scenario->nonFixedSphereRBs()) {
     for (auto const& p_rid : m_scenario->fixedInfPlaneRBs()) {
 
-      auto const pn = m_scenario->rbPlaneNormal(p_rid);
-      auto const pp = m_scenario->globalFramePosition(p_rid);
-      auto const sp = m_scenario->globalFramePosition(s_rid);
-      auto const sr = m_scenario->rbSphereRadius(s_rid);
-      auto const& d = sp - pp;
-      auto const pnd = blaze::inner(pn,d) - sr;
+      auto const  pn  = m_scenario->rbPlaneNormal(p_rid);
+      auto const  pp  = m_scenario->globalFramePosition(p_rid);
+      auto const  sp  = m_scenario->globalFramePosition(s_rid);
+      auto const  sr  = m_scenario->rbSphereRadius(s_rid);
+      auto const& d   = sp - pp;
+      auto const  pnd = blaze::inner(pn, d) - sr;
       EXPECT_GT(pnd, 0);
     }
   }
@@ -291,7 +290,7 @@ TEST_F(SolverDevLevel2Step2_Fixture003, Test001)
 
 
 
-//struct SolverDevLevel2Step3_TestFixture : ::testing::Test {
+// struct SolverDevLevel2Step3_TestFixture : ::testing::Test {
 
 //  using ::testing::Test::Test;
 //  ~SolverDevLevel2Step3_TestFixture() override {}
@@ -307,10 +306,9 @@ TEST_F(SolverDevLevel2Step2_Fixture003, Test001)
 
 
 
-//TEST_F(SolverDevLevel2Step3_TestFixture, Test001)
+// TEST_F(SolverDevLevel2Step3_TestFixture, Test001)
 //{
 //  solver_dev::level2::solve(m_scenario, 16ms);
 
 //  EXPECT_TRUE(false);
 //}
-
