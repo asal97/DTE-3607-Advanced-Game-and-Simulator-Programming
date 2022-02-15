@@ -15,7 +15,6 @@ namespace dte3607::physengine::solver_dev::level2
   template <typename Sphere_T, typename Params_T>
   void simulateAll(Sphere_T& data, Params_T const& params)
   {
-    //    auto const proc_kernel = [&params](auto& data) {
     for (auto& sphere : data) {
       auto [ds, a] = mechanics::computeLinearTrajectory(
         sphere.v, params.F, params.timestep - (sphere.t_c - params.t_0));
@@ -24,7 +23,6 @@ namespace dte3607::physengine::solver_dev::level2
       sphere.ds += ds;
       sphere.a += a;
     }
-    //    std::ranges::for_each(data, proc_kernel);
   }
   template <typename Intersect_T, typename Plane_T, typename Sphere_T,
             typename Params_T>
@@ -39,12 +37,7 @@ namespace dte3607::physengine::solver_dev::level2
           sphere.t_c, sphere.p, sphere.r, sphere.v, plane.p, plane.n, params.F,
           params.t_0, params.timestep);
         if (detection.has_value()) {
-          //          solver_types::IntersectDetProcDataBlock intersection;
-          //          intersection.sphere = sphere;
-          //          intersection.plane  = plane;
-          //          //                    intersection.status.is_collision =
-          //          true; intersection.col_tp = *detection;
-          //          //          sphere.t_c          = *detection;
+
           data.emplace_back(sphere, plane, detection.value());
         }
       }
@@ -94,19 +87,23 @@ namespace dte3607::physengine::solver_dev::level2
   {
 
     //    for (auto& intersection : sorted) {
-    auto& intersection = *(sorted.begin());
-    auto [ds, a]       = mechanics::computeLinearTrajectory(
-      intersection.sphere.v, params.F,
-      intersection.col_tp - intersection.sphere.t_c);
+    auto& sameTime = (*(sorted.begin())).col_tp;
+    for (auto& intersection : sorted) {
+      if (intersection.col_tp == sameTime) {
+        auto [ds, a] = mechanics::computeLinearTrajectory(
+          intersection.sphere.v, params.F,
+          intersection.col_tp - intersection.sphere.t_c);
 
-    simulateObject(intersection, params);
+        simulateObject(intersection, params);
 
-    auto VPrime = mechanics::computeImpactResponseSphereFixedPlane(
-      intersection.sphere.v, intersection.plane.n);
+        auto VPrime = mechanics::computeImpactResponseSphereFixedPlane(
+          intersection.sphere.v, intersection.plane.n);
 
 
-    intersection.sphere.v   = VPrime;
-    intersection.sphere.t_c = intersection.col_tp;
+        intersection.sphere.v   = VPrime;
+        intersection.sphere.t_c = intersection.col_tp;
+      }
+    }
   }
 
   template <concepts::SolverFixtureLevel2 Fixture_T>
