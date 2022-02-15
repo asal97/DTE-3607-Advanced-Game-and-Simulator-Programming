@@ -82,7 +82,7 @@ namespace dte3607::physengine::solver_dev::level2
       sphere.v, params.F, intersection.col_tp - sphere.t_c);
 
 
-    sphere.p = ds;
+    sphere.p += ds;
     sphere.v += a;
 
     sphere.ds += ds;

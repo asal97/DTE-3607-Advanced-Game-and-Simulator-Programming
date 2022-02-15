@@ -33,12 +33,9 @@ namespace dte3607::physengine::mechanics
 
     if (blaze::inner(ds, fplane_n) == 0) return std::nullopt;
 
-    auto const timeOfimpact = t_0 + (x * timestep);
-    if (timeOfimpact <= sphere_tc) return std::nullopt;
-
     if (x > 0
         && x <= 1 - (utils::toDt(sphere_tc - t_0) / utils::toDt(timestep)))
-      return t_0
+      return sphere_tc
              + utils::toDuration(types::SecondsD(x * (utils::toDt(timestep))));
 
     else
