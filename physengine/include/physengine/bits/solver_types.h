@@ -49,10 +49,12 @@ namespace dte3607::physengine::solver_types
   };
 
   struct IntersectDetProcDataBlock {
-    SphereGeomDataBlock&   sphere;
+    SphereGeomDataBlock&   sphere1;
+    SphereGeomDataBlock&   sphere2;
     InfPlaneGeomDataBlock& plane;
     //    IntsecStatusDataBlock status;
     types::HighResolutionTP col_tp;
+    bool                    withPlane;
   };
 
 }   // namespace dte3607::physengine::solver_types
