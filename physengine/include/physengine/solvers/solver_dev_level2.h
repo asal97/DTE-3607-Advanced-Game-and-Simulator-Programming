@@ -21,6 +21,10 @@ namespace dte3607::physengine::solver_dev::level2
       auto [ds, a] = mechanics::computeLinearTrajectory(
         sphere.v, params.F, params.timestep - (sphere.t_c - params.t_0));
 
+
+      sphere.ds += ds;
+      sphere.a += a;
+
       sphere.p += ds;
       sphere.v += a;
     }
@@ -89,6 +93,9 @@ namespace dte3607::physengine::solver_dev::level2
     auto [ds, a]  = mechanics::computeLinearTrajectory(
       sphere1.v, params.F, intersection.col_tp - sphere1.t_c);
 
+
+    sphere1.ds += ds;
+    sphere1.a += a;
     sphere1.p += ds;
     sphere1.v += a;
 
@@ -97,6 +104,8 @@ namespace dte3607::physengine::solver_dev::level2
       auto [ds_2, a_2] = mechanics::computeLinearTrajectory(
         sphere2.v, params.F, intersection.col_tp - sphere2.t_c);
 
+      sphere2.ds += ds_2;
+      sphere2.a += a_2;
 
       sphere2.p += ds_2;
       sphere2.v += a_2;

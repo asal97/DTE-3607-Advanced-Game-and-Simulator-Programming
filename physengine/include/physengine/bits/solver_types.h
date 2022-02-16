@@ -43,11 +43,6 @@ namespace dte3607::physengine::solver_types
     Vector3 n;
   };
 
-  struct IntsecStatusDataBlock {
-    bool                    is_collision;
-    types::HighResolutionTP col_tp;
-  };
-
   struct IntersectDetProcDataBlock {
     SphereGeomDataBlock&   sphere1;
     SphereGeomDataBlock&   sphere2;
