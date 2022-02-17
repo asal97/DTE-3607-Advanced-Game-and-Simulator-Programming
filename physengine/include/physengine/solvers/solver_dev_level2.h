@@ -93,22 +93,26 @@ namespace dte3607::physengine::solver_dev::level2
     auto [ds, a]  = mechanics::computeLinearTrajectory(
       sphere1.v, params.F, intersection.col_tp - sphere1.t_c);
 
+    auto scalar = utils::toDt(intersection.col_tp - sphere1.t_c)
+                  / utils::toDt(params.timestep);
 
-    sphere1.ds += ds;
-    sphere1.a += a;
-    sphere1.p += ds;
-    sphere1.v += a;
+    sphere1.ds += ds * scalar;
+    sphere1.a += a * scalar;
+    sphere1.p += ds * scalar;
+    sphere1.v += a * scalar;
 
     if (intersection.withPlane == false) {
       auto& sphere2    = intersection.sphere2;
       auto [ds_2, a_2] = mechanics::computeLinearTrajectory(
         sphere2.v, params.F, intersection.col_tp - sphere2.t_c);
+      scalar = utils::toDt(intersection.col_tp - sphere2.t_c)
+               / utils::toDt(params.timestep);
 
-      sphere2.ds += ds_2;
-      sphere2.a += a_2;
+      sphere2.ds += ds_2 * scalar;
+      sphere2.a += a_2 * scalar;
 
-      sphere2.p += ds_2;
-      sphere2.v += a_2;
+      sphere2.p += ds_2 * scalar;
+      sphere2.v += a_2 * scalar;
     }
   }
 

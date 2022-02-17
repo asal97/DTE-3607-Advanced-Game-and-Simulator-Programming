@@ -237,7 +237,7 @@ struct SolverDevLevel2Step2_Fixture003 : ::testing::Test {
 
 
     // Set external forces
-    m_scenario->setGravity({0, 0, 0});
+    m_scenario->setGravity({0, -10, 0});
 
 
     // make plane
@@ -316,7 +316,7 @@ struct SolverDevLevel2Step3_Fixture001 : ::testing::Test {
 
 
     // Set external forces
-    m_scenario->setGravity({0, 0, 0});
+    m_scenario->setGravity({0, -10, 0});
 
 
     // make plane
