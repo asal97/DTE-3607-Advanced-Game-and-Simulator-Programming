@@ -54,7 +54,9 @@ struct SolverDevLevel2Step1_Fixture001 : ::testing::Test {
 TEST_F(SolverDevLevel2Step1_Fixture001, Test001)
 {
 
-  solver_dev::level2::solve(*m_scenario, 1s);
+  for (int i = 0; i < 1000; i++) {
+    solver_dev::level2::solve(*m_scenario, 1s);
+  }
 
 
   auto no_rbs = m_scenario->noRigidBodies();
@@ -100,7 +102,9 @@ struct SolverDevLevel2Step1_Fixture002 : ::testing::Test {
 
 TEST_F(SolverDevLevel2Step1_Fixture002, Test001)
 {
-  solver_dev::level2::solve(*m_scenario, 1s);
+  for (int i = 0; i < 1000; i++) {
+    solver_dev::level2::solve(*m_scenario, 1s);
+  }
 
   // Expect to be inbetween the planes
   for (auto const& s_rid : m_scenario->nonFixedSphereRBs()) {
@@ -145,7 +149,9 @@ struct SolverDevLevel2Step2_Fixture001 : ::testing::Test {
 
 TEST_F(SolverDevLevel2Step2_Fixture001, Test001)
 {
-  solver_dev::level2::solve(*m_scenario, 1s);
+  for (int i = 0; i < 1000; i++) {
+    solver_dev::level2::solve(*m_scenario, 1s);
+  }
 
   for (auto const& s_rid : m_scenario->nonFixedSphereRBs()) {
     auto const sp = m_scenario->globalFramePosition(s_rid);
@@ -193,14 +199,13 @@ struct SolverDevLevel2Step2_Fixture002 : ::testing::Test {
 
 TEST_F(SolverDevLevel2Step2_Fixture002, Test001)
 {
-
+  for (int i = 0; i < 1000; i++) {
     solver_dev::level2::solve(*m_scenario, 2s);
+  }
 
- 
-  
-  
-  
-  
+
+
+
   // Expect to be inbetween the planes
   for (auto const& s_rid : m_scenario->nonFixedSphereRBs()) {
     for (auto const& p_rid : m_scenario->fixedInfPlaneRBs()) {
@@ -279,12 +284,12 @@ struct SolverDevLevel2Step2_Fixture003 : ::testing::Test {
 
 TEST_F(SolverDevLevel2Step2_Fixture003, Test001)
 {
-  solver_dev::level2::solve(*m_scenario, 1s);
-
+  //  for (int i = 0; i < 1000; i++) {
+  solver_dev::level2::solve(*m_scenario, 16ms);
+  //  }
   // Expect to be inbetween the planes
   for (auto const& s_rid : m_scenario->nonFixedSphereRBs()) {
     for (auto const& p_rid : m_scenario->fixedInfPlaneRBs()) {
-
       auto const  pn  = m_scenario->rbPlaneNormal(p_rid);
       auto const  pp  = m_scenario->globalFramePosition(p_rid);
       auto const  sp  = m_scenario->globalFramePosition(s_rid);
@@ -333,8 +338,9 @@ struct SolverDevLevel2Step3_Fixture001 : ::testing::Test {
 
 TEST_F(SolverDevLevel2Step3_Fixture001, Test001)
 {
-  solver_dev::level2::solve(*m_scenario, 1s);
-
+  for (int i = 0; i < 2; i++) {
+    solver_dev::level2::solve(*m_scenario, 30ms);
+  }
   // Expect to be inbetween the planes
   for (auto const& s_rid : m_scenario->nonFixedSphereRBs()) {
     for (auto const& p_rid : m_scenario->fixedInfPlaneRBs()) {
@@ -349,26 +355,3 @@ TEST_F(SolverDevLevel2Step3_Fixture001, Test001)
     }
   }
 }
-
-// struct SolverDevLevel2Step3_TestFixture : ::testing::Test {
-
-//  using ::testing::Test::Test;
-//  ~SolverDevLevel2Step3_TestFixture() override {}
-
-//  void SetUp() final
-//  {
-////    m_scenario_fixture = ...;
-//  }
-//  void TearDown() final {}
-
-//  fixtures::FixtureLevel2 m_scenario;
-//};
-
-
-
-// TEST_F(SolverDevLevel2Step3_TestFixture, Test001)
-//{
-//  solver_dev::level2::solve(m_scenario, 16ms);
-
-//  EXPECT_TRUE(false);
-//}

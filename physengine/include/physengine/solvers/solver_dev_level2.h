@@ -159,6 +159,7 @@ namespace dte3607::physengine::solver_dev::level2
     params.t_0      = now;
     for (auto& spheres : scenario.m_backend.m_sphere_data) {
       spheres.t_c = now;
+      spheres.ds  = {0, 0, 0};
     }
 
 
