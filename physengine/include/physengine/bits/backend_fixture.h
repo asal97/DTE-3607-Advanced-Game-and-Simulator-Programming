@@ -42,9 +42,8 @@ namespace dte3607::physengine::backend
                                  Vector3{0, 0, 0});
     bf.m_rb_cache.emplace(rbi, bf.m_cache_data.size() - 1);
 
-    bf.m_sphere_data.emplace_back(position, radius, Vector3{0, 0, 0},
-                                  Vector3{0, 0, 0}, velocity, Vector3{0, 0, 0},
-                                  types::HighResolutionTP{});
+    bf.m_sphere_data.emplace_back(position, radius, Vector3{0, 0, 0}, velocity,
+                                  Vector3{0, 0, 0}, types::HighResolutionTP{});
     bf.m_rb_sphere.emplace(rbi, bf.m_sphere_data.size() - 1);
   }
 

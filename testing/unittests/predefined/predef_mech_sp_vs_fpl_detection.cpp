@@ -27,7 +27,8 @@ using namespace std::chrono_literals;
 
 
 
-struct Mechanics_Sphere_vs_FixedPlane_CollisionDetection : ::testing::Test {
+struct Mechanics_Sphere_vs_FixedPlane_CollisionDetection
+    : ::testing::Test {
 
   using ::testing::Test::Test;
   ~Mechanics_Sphere_vs_FixedPlane_CollisionDetection() override {}
@@ -37,22 +38,23 @@ struct Mechanics_Sphere_vs_FixedPlane_CollisionDetection : ::testing::Test {
 
   // The sphere
   types::HighResolutionTP m_sphere_tc;
-  types::Point3           m_sphere_p;
-  types::ValueType        m_sphere_r;
-  types::Vector3          m_sphere_v;
+  types::Point3    m_sphere_p;
+  types::ValueType m_sphere_r;
+  types::Vector3   m_sphere_v;
 
   // The plane
   types::Point3  m_fplane_q;
   types::Vector3 m_fplane_n;
 
   // No gravity
-  types::Vector3 external_forces;
+  types::Vector3 m_external_forces;
+
 };
 
 
 
 struct Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0
-  : Mechanics_Sphere_vs_FixedPlane_CollisionDetection {
+    : Mechanics_Sphere_vs_FixedPlane_CollisionDetection {
 
   void SetUp() final
   {
@@ -69,8 +71,9 @@ struct Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0
     m_fplane_n = types::Vector3{-1, 0, 0};
 
     // No gravity
-    external_forces = types::Vector3{0, 0, 0};
+    m_external_forces = types::Vector3{0, 0, 0};
   }
+
 };
 
 
@@ -80,41 +83,33 @@ struct Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0
 TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0, DT16MS)
 {
   // Sim 16 [ms]
-  auto const ds
-    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 16ms)
-        .first;
-
   auto const res_16ms = mechanics::detectCollisionSphereFixedPlane(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_fplane_q, m_fplane_n, m_t_0, 16ms,
-    ds);
+    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_fplane_q, m_fplane_n,
+    m_external_forces, m_t_0, 16ms);
   EXPECT_FALSE(res_16ms);
 }
 
 TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0, DT1S)
 {
   // Sim 1 [s]
-  auto const ds
-    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 1s).first;
-
   auto const res_1s = mechanics::detectCollisionSphereFixedPlane(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_fplane_q, m_fplane_n, m_t_0, 1s, ds);
-
+    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_fplane_q, m_fplane_n,
+    m_external_forces, m_t_0, 1s);
   EXPECT_TRUE(res_1s);
 
-  //  if(res_1s) {
-  //    auto const res_1s_value = res_1s.value();
-  //    EXPECT_DOUBLE_EQ(res_1s_value, 0.9);
-  //  }
+//  if(res_1s) {
+//    auto const res_1s_value = res_1s.value();
+//    EXPECT_DOUBLE_EQ(res_1s_value, 0.9);
+//  }
+
 }
 
 TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0, DT2S)
 {
   // Sim 1 [ms]
-  auto const ds
-    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 2s).first;
-
   auto const res_2s = mechanics::detectCollisionSphereFixedPlane(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_fplane_q, m_fplane_n, m_t_0, 2s, ds);
+    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_fplane_q, m_fplane_n,
+    m_external_forces, m_t_0, 2s);
   EXPECT_TRUE(res_2s);
 }
 
@@ -122,8 +117,10 @@ TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0, DT2S)
 
 
 
+
+
 struct Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P500ms
-  : Mechanics_Sphere_vs_FixedPlane_CollisionDetection {
+    : Mechanics_Sphere_vs_FixedPlane_CollisionDetection {
 
   void SetUp() final
   {
@@ -140,8 +137,9 @@ struct Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P500ms
     m_fplane_n = types::Vector3{-1, 0, 0};
 
     // No gravity
-    external_forces = types::Vector3{0, 0, 0};
+    m_external_forces = types::Vector3{0, 0, 0};
   }
+
 };
 
 
@@ -149,13 +147,9 @@ struct Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P500ms
 TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P500ms, dt200ms)
 {
   // Sim 200 [ms]
-  auto const ds
-    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 200ms)
-        .first;
-
   auto const res_200ms = mechanics::detectCollisionSphereFixedPlane(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_fplane_q, m_fplane_n, m_t_0, 200ms,
-    ds);
+    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_fplane_q, m_fplane_n,
+    m_external_forces, m_t_0, 200ms);
 
   EXPECT_FALSE(res_200ms);
 }
@@ -163,28 +157,24 @@ TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P500ms, dt200ms)
 TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P500ms, dt1s)
 {
   // Sim 1 [s]
-  auto const ds
-    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 1s).first;
-
   auto const res_1s = mechanics::detectCollisionSphereFixedPlane(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_fplane_q, m_fplane_n, m_t_0, 1s, ds);
+    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_fplane_q, m_fplane_n,
+    m_external_forces, m_t_0, 1s);
 
-  EXPECT_FALSE(res_1s);
-  //  EXPECT_TRUE(res_1s);
-  //  if(res_1s) {
-  //    auto const res_1s_value = res_1s.value();
-  //    EXPECT_DOUBLE_EQ(res_1s_value, 0.9);
-  //  }
+    EXPECT_FALSE(res_1s);
+//  EXPECT_TRUE(res_1s);
+//  if(res_1s) {
+//    auto const res_1s_value = res_1s.value();
+//    EXPECT_DOUBLE_EQ(res_1s_value, 0.9);
+//  }
 }
 
 TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P500ms, dt2s)
 {
   // Sim 1 [ms]
-  auto const ds
-    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 2s).first;
-
   auto const res_2s = mechanics::detectCollisionSphereFixedPlane(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_fplane_q, m_fplane_n, m_t_0, 2s, ds);
+    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_fplane_q, m_fplane_n,
+    m_external_forces, m_t_0, 2s);
 
   EXPECT_TRUE(res_2s);
 }
@@ -193,8 +183,10 @@ TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P500ms, dt2s)
 
 
 
+
+
 struct Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P2s
-  : Mechanics_Sphere_vs_FixedPlane_CollisionDetection {
+    : Mechanics_Sphere_vs_FixedPlane_CollisionDetection {
 
   void SetUp() final
   {
@@ -211,8 +203,9 @@ struct Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P2s
     m_fplane_n = types::Vector3{-1, 0, 0};
 
     // No gravity
-    external_forces = types::Vector3{0, 0, 0};
+    m_external_forces = types::Vector3{0, 0, 0};
   }
+
 };
 
 
@@ -220,13 +213,9 @@ TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P2s, dt200ms)
 {
 
   // Sim 200 [ms]
-  auto const ds
-    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 200ms)
-        .first;
-
   auto const res_200ms = mechanics::detectCollisionSphereFixedPlane(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_fplane_q, m_fplane_n, m_t_0, 200ms,
-    ds);
+    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_fplane_q, m_fplane_n,
+    m_external_forces, m_t_0, 200ms);
 
   EXPECT_FALSE(res_200ms);
 }
@@ -234,11 +223,9 @@ TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P2s, dt200ms)
 TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P2s, dt1s)
 {
   // Sim 1 [s]
-  auto const ds
-    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 1s).first;
-
   auto const res_1s = mechanics::detectCollisionSphereFixedPlane(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_fplane_q, m_fplane_n, m_t_0, 1s, ds);
+    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_fplane_q, m_fplane_n,
+    m_external_forces, m_t_0, 1s);
 
   EXPECT_FALSE(res_1s);
 }
@@ -246,11 +233,9 @@ TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P2s, dt1s)
 TEST_F(Mechanics_Sp_vs_FPl_CD_Basic_SphereAtT0P2s, dt2s)
 {
   // Sim 1 [ms]
-  auto const ds
-    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 2s).first;
-
   auto const res_2s = mechanics::detectCollisionSphereFixedPlane(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_fplane_q, m_fplane_n, m_t_0, 2s, ds);
+    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_fplane_q, m_fplane_n,
+    m_external_forces, m_t_0, 2s);
 
   EXPECT_FALSE(res_2s);
 }

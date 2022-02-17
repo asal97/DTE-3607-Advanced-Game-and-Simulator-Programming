@@ -194,12 +194,13 @@ struct SolverDevLevel2Step2_Fixture002 : ::testing::Test {
 TEST_F(SolverDevLevel2Step2_Fixture002, Test001)
 {
 
-  solver_dev::level2::solve(*m_scenario, 2s);
+    solver_dev::level2::solve(*m_scenario, 2s);
 
-
-
-
-
+ 
+  
+  
+  
+  
   // Expect to be inbetween the planes
   for (auto const& s_rid : m_scenario->nonFixedSphereRBs()) {
     for (auto const& p_rid : m_scenario->fixedInfPlaneRBs()) {
@@ -278,11 +279,7 @@ struct SolverDevLevel2Step2_Fixture003 : ::testing::Test {
 
 TEST_F(SolverDevLevel2Step2_Fixture003, Test001)
 {
-
-
-  solver_dev::level2::solve(*m_scenario, 60s);
-
-
+  solver_dev::level2::solve(*m_scenario, 1s);
 
   // Expect to be inbetween the planes
   for (auto const& s_rid : m_scenario->nonFixedSphereRBs()) {

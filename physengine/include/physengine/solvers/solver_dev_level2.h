@@ -36,12 +36,11 @@ namespace dte3607::physengine::solver_dev::level2
   {
 
     for (int i = 0; i < spheres.size(); i++) {
-
       for (auto& plane : planes) {
 
         auto detection = mechanics::detectCollisionSphereFixedPlane(
-          spheres[i].t_c, spheres[i].p, spheres[i].r, plane.p, plane.n,
-          params.t_0, params.timestep, spheres[i].temp_ds);
+          spheres[i].t_c, spheres[i].p, spheres[i].r, spheres[i].v, plane.p,
+          plane.n, params.F, params.t_0, params.timestep);
 
         if (detection.has_value()) {
           data.emplace_back(spheres[i], spheres[0], plane, detection.value(),
@@ -49,13 +48,11 @@ namespace dte3607::physengine::solver_dev::level2
         }
       }
       for (int j = 0; j < spheres.size(); j++) {
-
         if (i != j) {
-
           auto detection = mechanics::detectCollisionSphereSphere(
-            spheres[i].t_c, spheres[i].p, spheres[i].r, spheres[j].t_c,
-            spheres[j].p, spheres[j].r, params.t_0, params.timestep,
-            spheres[i].temp_ds, spheres[j].temp_ds);
+            spheres[i].t_c, spheres[i].p, spheres[i].r, spheres[i].v,
+            spheres[j].t_c, spheres[j].p, spheres[j].r, spheres[j].v, params.F,
+            params.t_0, params.timestep);
 
           if (detection.has_value()) {
             data.emplace_back(spheres[i], spheres[j], planes[0],
@@ -84,6 +81,7 @@ namespace dte3607::physengine::solver_dev::level2
     for (auto intersect : intersection) {
       sorted.insert(intersect);
     }
+
 
     return sorted;
   }
@@ -140,8 +138,6 @@ namespace dte3607::physengine::solver_dev::level2
             intersection.sphere1.p, intersection.sphere1.v, 1.0,
             intersection.sphere2.p, intersection.sphere2.v, 1.0);
 
-
-
           intersection.sphere1.v   = VPrimes.first;
           intersection.sphere1.t_c = intersection.col_tp;
 
@@ -163,9 +159,6 @@ namespace dte3607::physengine::solver_dev::level2
     params.t_0      = now;
     for (auto& spheres : scenario.m_backend.m_sphere_data) {
       spheres.t_c = now;
-      spheres.temp_ds
-        = mechanics::computeLinearTrajectory(spheres.v, params.F, timestep)
-            .first;
     }
 
 
@@ -178,11 +171,6 @@ namespace dte3607::physengine::solver_dev::level2
     while (sorted.size() > 0) {
       HandleFirstCollision(sorted, params);
       scenario.m_backend.m_intersect_data.clear();
-      for (auto& spheres : scenario.m_backend.m_sphere_data) {
-        spheres.temp_ds
-          = mechanics::computeLinearTrajectory(spheres.v, params.F, timestep)
-              .first;
-      }
       detectingCollision(scenario.m_backend.m_intersect_data,
                          scenario.m_backend.m_sphere_data,
                          scenario.m_backend.m_plane_data, params);
