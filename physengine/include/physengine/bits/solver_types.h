@@ -33,6 +33,7 @@ namespace dte3607::physengine::solver_types
     Vector3                 p;
     double                  r;
     Vector3                 ds;
+    Vector3                 temp_ds;
     Vector3                 v;
     Vector3                 a;
     types::HighResolutionTP t_c;
@@ -44,10 +45,9 @@ namespace dte3607::physengine::solver_types
   };
 
   struct IntersectDetProcDataBlock {
-    SphereGeomDataBlock&   sphere1;
-    SphereGeomDataBlock&   sphere2;
-    InfPlaneGeomDataBlock& plane;
-    //    IntsecStatusDataBlock status;
+    SphereGeomDataBlock&    sphere1;
+    SphereGeomDataBlock&    sphere2;
+    InfPlaneGeomDataBlock&  plane;
     types::HighResolutionTP col_tp;
     bool                    withPlane;
   };

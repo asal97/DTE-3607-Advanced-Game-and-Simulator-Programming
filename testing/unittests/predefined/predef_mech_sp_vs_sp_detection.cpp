@@ -21,8 +21,7 @@ using namespace dte3607::physengine;
 
 
 
-struct Mechanics_Sphere_vs_Sphere_CollisionDetection
-    : ::testing::Test {
+struct Mechanics_Sphere_vs_Sphere_CollisionDetection : ::testing::Test {
 
   using ::testing::Test::Test;
   ~Mechanics_Sphere_vs_Sphere_CollisionDetection() override {}
@@ -32,18 +31,20 @@ struct Mechanics_Sphere_vs_Sphere_CollisionDetection
 
   // The sphere
   types::HighResolutionTP m_sphere_tc;
-  types::Point3    m_sphere_p;
-  types::ValueType m_sphere_r;
-  types::Vector3   m_sphere_v;
+  types::Point3           m_sphere_p;
+  types::ValueType        m_sphere_r;
+  types::Vector3          m_sphere_v;
+
 
   // The sphere
   types::HighResolutionTP m_other_tc;
-  types::Point3    m_other_p;
-  types::ValueType m_other_r;
-  types::Vector3   m_other_v;
+  types::Point3           m_other_p;
+  types::ValueType        m_other_r;
+  types::Vector3          m_other_v;
+
 
   // No gravity
-  types::Vector3 m_external_forces;
+  types::Vector3 external_forces;
 };
 
 
@@ -51,7 +52,7 @@ struct Mechanics_Sphere_vs_Sphere_CollisionDetection
 
 
 struct Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0
-    : Mechanics_Sphere_vs_Sphere_CollisionDetection {
+  : Mechanics_Sphere_vs_Sphere_CollisionDetection {
 
   void SetUp() final
   {
@@ -70,40 +71,63 @@ struct Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0
     m_other_v = types::Vector3{-10.0, 0.0, 0.0};
 
     // No gravity
-    m_external_forces = types::Vector3{0, 0, 0};
+    external_forces = types::Vector3{0, 0, 0};
   }
-
 };
 
 
 
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0, DT0ms)
 {
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 0ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 0ms).first;
 
   // Sim 0ms
   auto const res_0ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 0ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v*/ /*, m_external_forces*/, m_t_0, 0ms, ds1, ds2);
 
   EXPECT_FALSE(res_0ms);
 }
 
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0, DT200ms)
 {
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 200ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 200ms)
+        .first;
+
+
   // Sim 200ms
   auto const res_200ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 200ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 200ms, ds1, ds2);
 
   EXPECT_FALSE(res_200ms);
 }
 
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0, DT399ms)
 {
+
+
   // Sim 399ms
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 399ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 399ms)
+        .first;
+
+
+  // Sim 200ms
   auto const res_399ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 399ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 399ms, ds1, ds2);
 
   EXPECT_FALSE(res_399ms);
 }
@@ -111,9 +135,18 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0, DT399ms)
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0, DT400ms)
 {
   // Sim 400ms
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 400ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 400ms)
+        .first;
+
+
+  // Sim 200ms
   auto const res_400ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 400ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 400ms, ds1, ds2);
 
   EXPECT_TRUE(res_400ms);
 }
@@ -121,9 +154,16 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0, DT400ms)
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0, DT1s)
 {
   // Sim 1s
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 1s).first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 1s).first;
+
+
+
   auto const res_1s = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 1s);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 1s, ds1, ds2);
 
   EXPECT_TRUE(res_1s);
 }
@@ -132,10 +172,8 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0, DT1s)
 
 
 
-
-
 struct Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms
-    : Mechanics_Sphere_vs_Sphere_CollisionDetection {
+  : Mechanics_Sphere_vs_Sphere_CollisionDetection {
 
   void SetUp() final
   {
@@ -154,9 +192,8 @@ struct Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms
     m_other_v = types::Vector3{-10.0, 0.0, 0.0};
 
     // No gravity
-    m_external_forces = types::Vector3{0, 0, 0};
+    external_forces = types::Vector3{0, 0, 0};
   }
-
 };
 
 
@@ -164,9 +201,17 @@ struct Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms, DT0ms)
 {
   // Sim 0ms
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 0ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 0ms).first;
+
+
+  // Sim 200ms
   auto const res_0ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 0ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 0ms, ds1, ds2);
 
   EXPECT_FALSE(res_0ms);
 }
@@ -174,9 +219,18 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms, DT0ms)
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms, DT16ms)
 {
   // Sim 16ms
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 16ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 16ms)
+        .first;
+
+
+  // Sim 200ms
   auto const res_16ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 16ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 16ms, ds1, ds2);
 
   EXPECT_FALSE(res_16ms);
 }
@@ -184,9 +238,18 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms, DT16ms)
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms, DT599ms)
 {
   // Sim 599ms
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 599ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 599ms)
+        .first;
+
+
+  // Sim 200ms
   auto const res_599ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 599ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 599ms, ds1, ds2);
 
   EXPECT_FALSE(res_599ms);
 }
@@ -194,9 +257,18 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms, DT599ms)
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms, DT600ms)
 {
   // Sim 600ms
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 600ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 600ms)
+        .first;
+
+
+  // Sim 200ms
   auto const res_600ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 600ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 600ms, ds1, ds2);
 
   EXPECT_TRUE(res_600ms);
 }
@@ -204,9 +276,16 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms, DT600ms)
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms, DT1s)
 {
   // Sim 1s
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 1s).first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 1s).first;
+
+
+  // Sim 200ms
   auto const res_1s = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 1s);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 1s, ds1, ds2);
 
   EXPECT_TRUE(res_1s);
 }
@@ -215,10 +294,8 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P200ms, DT1s)
 
 
 
-
-
 struct Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P1s
-    : Mechanics_Sphere_vs_Sphere_CollisionDetection {
+  : Mechanics_Sphere_vs_Sphere_CollisionDetection {
 
   void SetUp() final
   {
@@ -237,18 +314,25 @@ struct Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P1s
     m_other_v = types::Vector3{-10.0, 0.0, 0.0};
 
     // No gravity
-    m_external_forces = types::Vector3{0, 0, 0};
+    external_forces = types::Vector3{0, 0, 0};
   }
-
 };
 
 
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P1s, DT0ms)
 {
   // Sim 0ms
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 0ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 0ms).first;
+
+
+  // Sim 200ms
   auto const res_0ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 0ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 0ms, ds1, ds2);
 
   EXPECT_FALSE(res_0ms);
 }
@@ -256,9 +340,18 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P1s, DT0ms)
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P1s, DT16ms)
 {
   // Sim 16ms
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 16ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 16ms)
+        .first;
+
+
+  // Sim 200ms
   auto const res_16ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 16ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 16ms, ds1, ds2);
 
   EXPECT_FALSE(res_16ms);
 }
@@ -266,9 +359,18 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P1s, DT16ms)
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P1s, DT599ms)
 {
   // Sim 599ms
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 599ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 599ms)
+        .first;
+
+
+  // Sim 200ms
   auto const res_599ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 599ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 599ms, ds1, ds2);
 
   EXPECT_FALSE(res_599ms);
 }
@@ -276,9 +378,18 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P1s, DT599ms)
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P1s, DT600ms)
 {
   // Sim 600ms
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 600ms)
+        .first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 600ms)
+        .first;
+
+
+  // Sim 200ms
   auto const res_600ms = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 600ms);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 600ms, ds1, ds2);
 
   EXPECT_FALSE(res_600ms);
 }
@@ -286,9 +397,16 @@ TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P1s, DT600ms)
 TEST_F(Mechanics_Sp_vs_Sp_CD_Basic_SphereAtT0P1s, DT1s)
 {
   // Sim 1s
+  auto const ds1
+    = mechanics::computeLinearTrajectory(m_sphere_v, external_forces, 1s).first;
+  auto const ds2
+    = mechanics::computeLinearTrajectory(m_other_v, external_forces, 1s).first;
+
+
+  // Sim 200ms
   auto const res_1s = mechanics::detectCollisionSphereSphere(
-    m_sphere_tc, m_sphere_p, m_sphere_r, m_sphere_v, m_other_tc, m_other_p,
-    m_other_r, m_other_v, m_external_forces, m_t_0, 1s);
+    m_sphere_tc, m_sphere_p, m_sphere_r /*, m_sphere_v*/, m_other_tc, m_other_p,
+    m_other_r /*, m_other_v, m_external_forces*/, m_t_0, 1s, ds1, ds2);
 
   EXPECT_FALSE(res_1s);
 }

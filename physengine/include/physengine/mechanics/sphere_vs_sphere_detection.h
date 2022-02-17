@@ -14,21 +14,25 @@ namespace dte3607::physengine::mechanics
     [[maybe_unused]] types::HighResolutionTP const& s1_tc,
     [[maybe_unused]] types::Point3 const&           s1_p,
     [[maybe_unused]] types::ValueType               s1_r,
-    [[maybe_unused]] types::Vector3 const&          s1_v,
+    //    [[maybe_unused]] types::Vector3 const&          s1_v,
     [[maybe_unused]] types::HighResolutionTP const& s2_tc,
     [[maybe_unused]] types::Point3 const&           s2_p,
     [[maybe_unused]] types::ValueType               s2_r,
-    [[maybe_unused]] types::Vector3 const&          s2_v,
-    [[maybe_unused]] types::Vector3 const&          external_forces,
+    //    [[maybe_unused]] types::Vector3 const&          s2_v,
+    //    [[maybe_unused]] types::Vector3 const&          external_forces,
     [[maybe_unused]] types::HighResolutionTP const& t_0,
-    [[maybe_unused]] types::Duration                timestep)
+    [[maybe_unused]] types::Duration                timestep,
+    [[maybe_unused]] types::Vector3 const&          ds1,
+    [[maybe_unused]] types::Vector3 const&          ds2)
   {
-    auto const ds1
-      = mechanics::computeLinearTrajectory(s1_v, external_forces, timestep)
-          .first;
-    auto const ds2
-      = mechanics::computeLinearTrajectory(s2_v, external_forces, timestep)
-          .first;
+    //    auto const ds1
+    //      = mechanics::computeLinearTrajectory(s1_v, external_forces,
+    //      timestep)
+    //          .first;
+    //    auto const ds2
+    //      = mechanics::computeLinearTrajectory(s2_v, external_forces,
+    //      timestep)
+    //          .first;
     auto const r  = s1_r + s2_r;
     auto const Q  = s2_p - s1_p;
     auto const R  = ds2 - ds1;

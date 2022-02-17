@@ -15,16 +15,18 @@ namespace dte3607::physengine::mechanics
     [[maybe_unused]] types::HighResolutionTP const& sphere_tc,
     [[maybe_unused]] types::Point3 const&           sphere_p,
     [[maybe_unused]] types::ValueType               sphere_r,
-    [[maybe_unused]] types::Vector3 const&          sphere_v,
-    [[maybe_unused]] types::Point3 const&           fplane_q,
-    [[maybe_unused]] types::Vector3 const&          fplane_n,
-    [[maybe_unused]] types::Vector3 const&          external_forces,
+    //    [[maybe_unused]] types::Vector3 const&          sphere_v,
+    [[maybe_unused]] types::Point3 const&  fplane_q,
+    [[maybe_unused]] types::Vector3 const& fplane_n,
+    //    [[maybe_unused]] types::Vector3 const&          external_forces,
     [[maybe_unused]] types::HighResolutionTP const& t_0,
-    [[maybe_unused]] types::Duration                timestep)
+    [[maybe_unused]] types::Duration                timestep,
+    [[maybe_unused]] types::Vector3                 ds)
   {
-    auto const ds
-      = mechanics::computeLinearTrajectory(sphere_v, external_forces, timestep)
-          .first;
+    //    auto const ds
+    //      = mechanics::computeLinearTrajectory(sphere_v, external_forces,
+    //      timestep)
+    //          .first;
 
     auto const d         = (fplane_q + (sphere_r * fplane_n)) - sphere_p;
     auto       RWithoutN = blaze::inner(ds, fplane_n);

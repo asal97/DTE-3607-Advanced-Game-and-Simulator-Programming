@@ -14,18 +14,18 @@ namespace dte3607::physengine::mechanics
     [[maybe_unused]] types::Duration       timestep)
   {
 
-      auto const F  = external_forces;
-      auto const dt = utils::toDt(timestep);
+    auto const F  = external_forces;
+    auto const dt = utils::toDt(timestep);
 
-      auto const v = velocity;
-      auto const a = F * dt;
+    auto const v = velocity;
+    auto const a = F * dt;
 
-      auto const ds = (v + 0.5 * a) * dt;
+    auto const ds = (v + 0.5 * a) * dt;
 
-      return {ds, a};
+    return std::make_pair(ds, a);
   }
 
 
 }   // namespace dte3607::physengine::mechanics
 
-#endif // DTE3607_PHYSENGINE_MECHANICS_COMPUTE_TRAJECTORY_H
+#endif   // DTE3607_PHYSENGINE_MECHANICS_COMPUTE_TRAJECTORY_H
