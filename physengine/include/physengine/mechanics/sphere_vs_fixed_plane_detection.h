@@ -30,13 +30,12 @@ namespace dte3607::physengine::mechanics
     auto       RWithoutN = blaze::inner(ds, fplane_n);
     auto       QWithoutN = blaze::inner(d, fplane_n);
     auto const x         = QWithoutN / RWithoutN;
+    auto const dt        = (utils::toDt(timestep));
 
-    if (blaze::inner(ds, fplane_n) == 0) return std::nullopt;
+    if (RWithoutN == 0) return std::nullopt;
 
-    if (x > 0
-        && x <= 1 - (utils::toDt(sphere_tc - t_0) / utils::toDt(timestep)))
-      return sphere_tc
-             + utils::toDuration(types::SecondsD(x * (utils::toDt(timestep))));
+    if (x > 0 && x <= 1 - (utils::toDt(sphere_tc - t_0) / dt))
+      return sphere_tc + utils::toDuration(types::SecondsD(x * dt));
 
     else
       return std::nullopt;
