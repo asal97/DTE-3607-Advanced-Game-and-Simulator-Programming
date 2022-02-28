@@ -29,34 +29,40 @@ namespace dte3607::physengine::mechanics
     auto const ds2
       = mechanics::computeLinearTrajectory(s2_v, external_forces, timestep)
           .first;
-    auto const r  = s1_r + s2_r;
-    auto const Q  = s2_p - s1_p;
-    auto const R  = ds2 - ds1;
-    auto const dt = (utils::toDt(timestep));
+    auto const r = s1_r + s2_r;
+    auto const Q = s2_p - s1_p;
+    auto const R = ds2 - ds1;
+    //    auto const dt = (utils::toDt(timestep));
 
     auto const innerRR = blaze::inner(R, R);
 
-    if (innerRR == 0) return std::nullopt;
+    if (blaze::inner(R, R) == 0) return std::nullopt;
 
 
     auto const innerRQ = blaze::inner(Q, R);
 
-    auto const innerQQ = blaze::inner(Q, Q);
+    //    auto const innerQQ = blaze::inner(Q, Q);
 
-    if ((std::pow(innerRQ, 2) - (innerRR) * (innerQQ - std::pow(r, 2))) < 0)
+    if ((std::pow(innerRQ, 2)
+         - (innerRR) * (blaze::inner(Q, Q) - std::pow(r, 2)))
+        < 0)
       return std::nullopt;
 
     auto const x = (-innerRQ
                     - std::sqrt(std::pow(innerRQ, 2)
-                                - (innerRR) * (innerQQ - std::pow(r, 2))))
-                   / innerRR;
+                                - (blaze::inner(R, R))
+                                    * (blaze::inner(Q, Q) - std::pow(r, 2))))
+                   / blaze::inner(R, R);
 
     auto const timeOfimpact = t_0 + (x * timestep);
     if (timeOfimpact <= s1_tc && timeOfimpact <= s2_tc) return std::nullopt;
 
-    if (x > 0 && x <= 1 - (utils::toDt(std::max(s1_tc, s2_tc) - t_0) / dt))
+    if (x > 0
+        && x <= 1
+                  - (utils::toDt(std::max(s1_tc, s2_tc) - t_0)
+                     / utils::toDt(timestep)))
       return std::max(s1_tc, s2_tc)
-             + utils::toDuration(types::SecondsD(x * dt));
+             + utils::toDuration(types::SecondsD(x * (utils::toDt(timestep))));
 
     else
       return std::nullopt;
