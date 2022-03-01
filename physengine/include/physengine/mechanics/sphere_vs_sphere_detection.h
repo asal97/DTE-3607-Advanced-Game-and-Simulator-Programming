@@ -34,22 +34,22 @@ namespace dte3607::physengine::mechanics
     auto const R = ds2 - ds1;
     //    auto const dt = (utils::toDt(timestep));
 
-    auto const innerRR = blaze::inner(R, R);
+    //    auto const innerRR = blaze::inner(R, R);
 
     if (blaze::inner(R, R) == 0) return std::nullopt;
 
 
-    auto const innerRQ = blaze::inner(Q, R);
+    //    auto const innerRQ = blaze::inner(Q, R);
 
     //    auto const innerQQ = blaze::inner(Q, Q);
 
-    if ((std::pow(innerRQ, 2)
-         - (innerRR) * (blaze::inner(Q, Q) - std::pow(r, 2)))
+    if ((std::pow(blaze::inner(Q, R), 2)
+         - (blaze::inner(R, R)) * (blaze::inner(Q, Q) - std::pow(r, 2)))
         < 0)
       return std::nullopt;
 
-    auto const x = (-innerRQ
-                    - std::sqrt(std::pow(innerRQ, 2)
+    auto const x = (-(blaze::inner(Q, R))
+                    - std::sqrt(std::pow(blaze::inner(Q, R), 2)
                                 - (blaze::inner(R, R))
                                     * (blaze::inner(Q, Q) - std::pow(r, 2))))
                    / blaze::inner(R, R);
