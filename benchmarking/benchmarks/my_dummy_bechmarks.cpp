@@ -8,55 +8,47 @@
 #include <numeric>
 #include <random>
 
+#include <physengine/solvers/solver_dev_level2.h>
+#include <physengine/bits/fixtures.h>
+#include <physengine/bits/types.h>
 
-namespace dte3607::benchmarking::predef {
+using namespace std::chrono_literals;
 
-    struct GoldDummyBenchmarkF : benchmark::Fixture {
+namespace dte3607::benchmarking::predef
+{
+  size_t Loops = 5000;
+  struct GoldDummyBenchmarkF : benchmark::Fixture {
 
-      using benchmark::Fixture::Fixture;
-      ~GoldDummyBenchmarkF() override {}
+    using benchmark::Fixture::Fixture;
+    std::unique_ptr<dte3607::physengine::fixtures::FixtureLevel2> m_scenario;
+    ~GoldDummyBenchmarkF() override {}
 
-      void SetUp(benchmark::State const&) final
-      {
-        int no_ints = 1'000'000;
-        my_ints.reserve(no_ints);
+    void SetUp(benchmark::State const&) final
+    {
+      // Create Fixture
+      m_scenario
+        = std::make_unique<dte3607::physengine::fixtures::FixtureLevel2>();
 
-        std::random_device rd;
-        std::mt19937                    gen(rd());
-        std::uniform_int_distribution<> distrib(0, 10);
 
-        for (int n = 0; n < no_ints; ++n) {
-          my_ints.emplace_back(distrib(gen));
-        }
+      // Set external forces
+      m_scenario->setGravity({0, 0, 0});
+
+
+      // make plane
+      m_scenario->createFixedInfPlane({-1, 0, 0}, {10, 0, 0});
+
+      m_scenario->createFixedInfPlane({1, 0, 0}, {-10, 0, 0});
+
+
+      // make sphere
+      for (int i = 0; i < Loops; i++) {
+        m_scenario->createSphere(1.0, {100, 0, 0}, {2, 0, i * 1.0});
+        m_scenario->createSphere(1.0, {-100, 0, 0}, {-2, 0, i * 1.0});
       }
-      void TearDown(benchmark::State const&) override { my_ints.clear(); }
+    }
+    void TearDown(benchmark::State const&) final { m_scenario.release(); }
+  };
 
-      std::vector<int> my_ints;
-    };
-
-
-    struct SilverDummyBenchmarkF : benchmark::Fixture {
-
-      using benchmark::Fixture::Fixture;
-      ~SilverDummyBenchmarkF() override {}
-
-      void SetUp(benchmark::State const&) final
-      {
-        int no_ints = 1'000'000;
-        my_ints.reserve(no_ints);
-
-        std::random_device rd;
-        std::mt19937                    gen(rd());
-        std::uniform_int_distribution<> distrib(0, 10);
-
-        for (int n = 0; n < no_ints; ++n) {
-          my_ints.push_back(std::move(std::make_unique<int>(distrib(gen))));
-        }
-      }
-      void TearDown(benchmark::State const&) override { my_ints.clear(); }
-
-      std::vector<std::unique_ptr<int>> my_ints;
-    };
 
 }   // namespace dte3607::benchmarking::predef
 
@@ -67,29 +59,24 @@ namespace dte3607::benchmarking::predef {
 using namespace dte3607::benchmarking::predef;
 
 // Dummy benchmarks
-BENCHMARK_DEFINE_F(GoldDummyBenchmarkF, dummy_test)
+BENCHMARK_DEFINE_F(GoldDummyBenchmarkF, ms16)
 (benchmark::State& st)
 {
-  for ([[maybe_unused]]auto const& _ : st)
-    auto const ans [[maybe_unused]]
-    = std::accumulate(std::begin(my_ints), std::end(my_ints), 0);
+  for ([[maybe_unused]] auto const& _ : st)
+    dte3607::physengine::solver_dev::level2::solve(*m_scenario, 16ms);
 }
 
 // Dummy benchmarks
-BENCHMARK_DEFINE_F(SilverDummyBenchmarkF, dummy_test)
+BENCHMARK_DEFINE_F(GoldDummyBenchmarkF, ms30)
 (benchmark::State& st)
 {
-  for ([[maybe_unused]]auto const& _ : st)
-    auto const ans [[maybe_unused]]
-    = std::accumulate(std::begin(my_ints), std::end(my_ints), 0,
-                      [](auto const& sub_sum, auto const& ele_ptr) {
-                        return sub_sum + *ele_ptr;
-                      });
+  for ([[maybe_unused]] auto const& _ : st)
+    dte3607::physengine::solver_dev::level2::solve(*m_scenario, 30ms);
 }
 
 
-BENCHMARK_REGISTER_F(GoldDummyBenchmarkF, dummy_test);
+BENCHMARK_REGISTER_F(GoldDummyBenchmarkF, ms16);
 
-BENCHMARK_REGISTER_F(SilverDummyBenchmarkF, dummy_test);
+BENCHMARK_REGISTER_F(GoldDummyBenchmarkF, ms30);
 
 BENCHMARK_MAIN();
