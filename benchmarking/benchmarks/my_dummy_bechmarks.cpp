@@ -42,8 +42,10 @@ namespace dte3607::benchmarking::predef
 
       // make sphere
       for (int i = 0; i < Loops; i++) {
-        m_scenario->createSphere(1.0, {100, 0, 0}, {2, 0, i * 1.0});
-        m_scenario->createSphere(1.0, {-100, 0, 0}, {-2, 0, i * 1.0});
+        m_scenario->createSphere(1.0, {100, 0, 0}, {2, 0, i * 2.0});
+        m_scenario->createSphere(1.0, {-100, 0, 0}, {-2, 0, i * 2.0});
+        m_scenario->createSphere(1.0, {100, 0, 0}, {1, 0, i * 2.0 + 2});
+        m_scenario->createSphere(1.0, {-100, 0, 0}, {-1, 0, i * 2.0 + 2});
       }
     }
     void TearDown(benchmark::State const&) final { m_scenario.release(); }
